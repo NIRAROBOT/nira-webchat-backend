@@ -1,0 +1,14 @@
+{
+  "name": "nira-webchat-backend",
+  "version": "1.0.0",
+  "description": "Backend del WebChat de NIRA usando la API de OpenAI",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "openai": "^4.0.0"
+  }
+}
