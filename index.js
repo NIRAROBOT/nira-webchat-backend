@@ -9,16 +9,21 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-let userMessageCount = {}; // Contador mensajes por usuario (email)
+let userMessageCount = {}; // Contador de mensajes por email
+
+// ==========================
+//        ENDPOINT /CHAT
+// ==========================
 
 app.post("/chat", async (req, res) => {
   const { email, message } = req.body;
 
+  // Validación básica
   if (!email || !message) {
     return res.json({ reply: "Falta email o mensaje." });
   }
 
-  // Contar mensajes
+  // Contar mensajes por usuario
   if (!userMessageCount[email]) {
     userMessageCount[email] = 1;
   } else {
@@ -30,50 +35,56 @@ app.post("/chat", async (req, res) => {
     return res.json({
       reply:
         "Has llegado al límite de tus 3 respuestas gratuitas.\n\n" +
-        "Para continuar chateando con NIRA y obtener acceso completo, conviértete en fundador.\n\n" +
+        "Para continuar chateando con NIRA y obtener acceso completo, conviértete en fundador aquí:\n" +
         "https://nirarobot.com/founders/\n",
     });
   }
 
-  // ---- AQUI SE LLAMA A OPENAI ----
+  // ==========================
+  //  LLAMADA REAL A OPENAI
+  // ==========================
+
   try {
-    const openaiResponse = await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            {
-              role: "system",
-              content:
-                "Eres NIRA, la asistente inteligente especializada en artistas y creadores.",
-            },
-            { role: "user", content: message },
-          ],
-        }),
-      }
-    );
+    const apiKey = process.env.OPENAI_API_KEY;
 
-    const data = await openaiResponse.json();
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Eres NIRA, un asistente inteligente experto en música, creación, marketing digital y apoyo a artistas.",
+          },
+          { role: "user", content: message },
+        ],
+      }),
+    });
 
-    // Respuesta real
-    return res.json({
-      reply: data.choices?.[0]?.message?.content || "NIRA no pudo responder.",
-    });
-  } catch (err) {
-    console.error("ERROR:", err);
-    return res.json({
-      reply: "Hubo un error procesando la solicitud a OpenAI.",
-    });
+    const data = await response.json();
+
+    const aiReply = data?.choices?.[0]?.message?.content || "No entendí tu mensaje.";
+
+    return res.json({ reply: aiReply });
+  } catch (error) {
+    console.error("Error al llamar OpenAI:", error);
+    return res.json({ reply: "Error conectando con NIRA. Intenta más tarde." });
   }
 });
 
-// Puerto Render
+// ==========================
+//   SERVIDOR EN PUERTO 3000
+// ==========================
+
+app.get("/", (req, res) => {
+  res.send("NIRA WebChat Backend funcionando.");
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Servidor activo en puerto " + PORT);
