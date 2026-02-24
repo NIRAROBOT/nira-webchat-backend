@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import fetch from "node-fetch";
 
 dotenv.config();
-
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -29,7 +29,33 @@ app.post("/chat", async (req, res) => {
   } else {
     userMessageCount[email]++;
   }
+// Llamada a OpenAI
+try {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Eres NIRA, una asistente inteligente para artistas, creadores y emprendedores. Responde de forma clara, profesional y estratégica." },
+        { role: "user", content: message }
+      ],
+      temperature: 0.7
+    })
+  });
 
+  const data = await response.json();
+  const aiReply = data.choices[0].message.content;
+
+  return res.json({ reply: aiReply });
+
+} catch (error) {
+  console.error("Error OpenAI:", error);
+  return res.json({ reply: "Error procesando la solicitud." });
+}
   // Límite de 3 mensajes
   if (userMessageCount[email] > 3) {
     return res.json({
