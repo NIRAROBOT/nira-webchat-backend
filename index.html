@@ -26,7 +26,7 @@ async function send() {
   let res = await fetch("https://nira-webchat-backend.onrender.com/chat", {
     method:"POST",
     headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ message:text })
+   body: JSON.stringify({ message:text, user:"web" })
   });
   let data = await res.json();
   document.getElementById("messages").innerHTML += "<p><b>You:</b> "+text+"</p>";
