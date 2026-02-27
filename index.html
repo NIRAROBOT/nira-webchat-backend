@@ -23,12 +23,11 @@ button { padding:10px; }
 <script>
 async function send() {
   let text = document.getElementById("msg").value;
-  let res = await fetch("https://nira-webchat-backend.onrender.com/chat", {
-    method:"POST",
+  "https://nira-webchat-backend.onrender.com/chat"
     headers:{ "Content-Type":"application/json" },
    body: JSON.stringify({ message:text, user:"web" })
   });
-  let data = await res.json();
+body: JSON.stringify({ message:text })
   document.getElementById("messages").innerHTML += "<p><b>You:</b> "+text+"</p>";
   document.getElementById("messages").innerHTML += "<p><b>NIRA:</b> "+data.reply+"</p>";
 }
