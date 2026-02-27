@@ -23,7 +23,7 @@ button { padding:10px; }
 <script>
 async function send() {
   let text = document.getElementById("msg").value;
-  let res = await fetch("/chat", {
+  let res = await fetch("https://nira-webchat-backend.onrender.com/chat", {
     method:"POST",
     headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({ message:text })
