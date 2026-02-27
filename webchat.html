@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>NIRA WebChat</title>
+<style>
+body { font-family: Arial; background:#111; color:white; }
+#chat { width: 90%; max-width:600px; margin:auto; margin-top:50px; }
+#messages { border:1px solid #444; height:300px; overflow:auto; padding:10px; }
+input { width:80%; padding:10px; }
+button { padding:10px; }
+</style>
+</head>
+<body>
+
+<div id="chat">
+<h2>NIRA Chat</h2>
+<div id="messages"></div>
+<input id="msg" placeholder="Type your message..." />
+<button onclick="send()">Send</button>
+</div>
+
+<script>
+async function send() {
+  let text = document.getElementById("msg").value;
+  let res = await fetch("/chat", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ message:text })
+  });
+  let data = await res.json();
+  document.getElementById("messages").innerHTML += "<p><b>You:</b> "+text+"</p>";
+  document.getElementById("messages").innerHTML += "<p><b>NIRA:</b> "+data.reply+"</p>";
+}
+</script>
+
+</body>
+</html>
