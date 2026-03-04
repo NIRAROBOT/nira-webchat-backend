@@ -2,34 +2,160 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>NIRA WebChat</title>
+<title>NIRA Chat</title>
+
 <style>
-body { font-family: Arial; background:#111; color:white; }
-#chat { width: 90%; max-width:600px; margin:auto; margin-top:50px; }
-#messages { border:1px solid #444; height:300px; overflow:auto; padding:10px; }
-input { width:80%; padding:10px; }
-button { padding:10px; }
+body{
+  background:#0f0f0f;
+  font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+}
+
+#chat-container{
+  width:700px;
+  height:700px;
+  background:#1a1a1a;
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 0 40px rgba(0,0,0,.6);
+}
+
+#header{
+  padding:18px;
+  border-bottom:1px solid #333;
+  font-size:20px;
+  font-weight:600;
+}
+
+#messages{
+  flex:1;
+  overflow:auto;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.user{
+  background:#2563eb;
+  padding:12px 16px;
+  border-radius:10px;
+  align-self:flex-end;
+  max-width:70%;
+}
+
+.bot{
+  background:#333;
+  padding:12px 16px;
+  border-radius:10px;
+  align-self:flex-start;
+  max-width:70%;
+}
+
+#input-area{
+  display:flex;
+  border-top:1px solid #333;
+  padding:12px;
+}
+
+#msg{
+  flex:1;
+  background:#2a2a2a;
+  border:none;
+  color:white;
+  padding:14px;
+  border-radius:8px;
+  outline:none;
+  font-size:16px;
+}
+
+button{
+  background:#2563eb;
+  border:none;
+  color:white;
+  padding:12px 20px;
+  margin-left:10px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+button:hover{
+  background:#1d4ed8;
+}
 </style>
 </head>
+
 <body>
 
-<div id="chat">
-<h2>NIRA Chat</h2>
+<div id="chat-container">
+
+<div id="header">
+NIRA AI
+</div>
+
 <div id="messages"></div>
-<input id="msg" placeholder="Type your message..." />
+
+<div id="input-area">
+<input id="msg" placeholder="Ask NIRA something..." />
 <button onclick="send()">Send</button>
 </div>
 
+</div>
+
 <script>
-async function send() {
-  let text = document.getElementById("msg").value;
-  "https://nira-webchat-backend.onrender.com/chat"
-    headers:{ "Content-Type":"application/json" },
-   body: JSON.stringify({ message:text, user:"web" })
-  });
-body: JSON.stringify({ message:text })
-  document.getElementById("messages").innerHTML += "<p><b>You:</b> "+text+"</p>";
-  document.getElementById("messages").innerHTML += "<p><b>NIRA:</b> "+data.reply+"</p>";
+
+const input = document.getElementById("msg");
+
+input.addEventListener("keypress",function(e){
+  if(e.key === "Enter"){
+    send();
+  }
+});
+
+async function send(){
+
+  let text = input.value;
+
+  if(!text) return;
+
+  let messages = document.getElementById("messages");
+
+  messages.innerHTML += `<div class="user">${text}</div>`;
+
+  input.value = "";
+
+  try{
+
+    let res = await fetch(
+      "https://nira-webchat-backend.onrender.com/chat",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({message:text})
+      }
+    );
+
+    let data = await res.json();
+
+    messages.innerHTML += `<div class="bot">${data.reply}</div>`;
+
+    messages.scrollTop = messages.scrollHeight;
+
+  }catch(error){
+
+    messages.innerHTML += `<div class="bot">Server not responding</div>`;
+
+  }
+
 }
 </script>
 
