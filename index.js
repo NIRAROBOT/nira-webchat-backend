@@ -19,9 +19,9 @@ app.post("/chat", async (req, res) => {
   const { email, message } = req.body;
 
   // Validación básica
-  if (!email || !message) {
-    return res.json({ reply: "Falta email o mensaje." });
-  }
+if (!message) {
+  return res.json({ reply: "Falta mensaje." });
+}
 
   // Contar mensajes por usuario
   if (!userMessageCount[email]) {
