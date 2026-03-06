@@ -108,7 +108,7 @@ try {
 // ==========================
 
 app.get("/", (req, res) => {
-res.sendFile("chat.html", { root: "." });
+res.sendFile(__dirname + "/chat.html");
 });
 
 const PORT = process.env.PORT || 3000;
