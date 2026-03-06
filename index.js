@@ -8,7 +8,7 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const app = express();
 app.use(express.json());
 app.use(cors());
-
+app.use(express.static("."));
 let userMessageCount = {}; // Contador de mensajes por email
 
 // ==========================
