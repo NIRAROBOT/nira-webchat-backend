@@ -108,7 +108,7 @@ try {
 // ==========================
 
 app.get("/", (req, res) => {
-  res.send("NIRA WebChat Backend funcionando.");
+res.sendFile("chat.html", { root: "." });
 });
 
 const PORT = process.env.PORT || 3000;
