@@ -104,7 +104,7 @@ NIRA AI
 
 <div id="input-area">
 <input id="msg" placeholder="Ask NIRA something..." />
-<button onclick="send()">Send</button>
+<button id="sendBtn">Send</button>
 </div>
 
 </div>
@@ -112,6 +112,8 @@ NIRA AI
 <script>
 
 const input = document.getElementById("msg");
+const sendBtn = document.getElementById("sendBtn");
+sendBtn.addEventListener("click", send);
 
 input.addEventListener("keypress",function(e){
   if(e.key === "Enter"){
