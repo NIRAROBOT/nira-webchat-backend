@@ -1,9 +1,183 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>NIRA Chat</title>
+<meta charset="UTF-8">
+<title>NIRA AI</title>
+
+<style>
+
+body{
+background:#0B0F19;
+font-family:Arial, Helvetica, sans-serif;
+margin:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+color:white;
+}
+
+.chat-container{
+width:420px;
+height:600px;
+background:#111827;
+border-radius:16px;
+box-shadow:0 0 25px rgba(56,189,248,0.4);
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+
+.chat-header{
+background:#020617;
+padding:15px;
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:bold;
+font-size:16px;
+border-bottom:1px solid #1e293b;
+}
+
+.avatar{
+width:32px;
+height:32px;
+border-radius:50%;
+background:#38bdf8;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:18px;
+}
+
+.messages{
+flex:1;
+padding:15px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.bubble{
+padding:10px 14px;
+border-radius:14px;
+max-width:75%;
+font-size:14px;
+line-height:1.4;
+}
+
+.user{
+background:#2563eb;
+align-self:flex-end;
+}
+
+.nira{
+background:#1f2937;
+}
+
+.input-area{
+display:flex;
+padding:10px;
+background:#020617;
+border-top:1px solid #1e293b;
+}
+
+input{
+flex:1;
+padding:10px;
+border-radius:10px;
+border:none;
+outline:none;
+background:#1e293b;
+color:white;
+}
+
+button{
+margin-left:6px;
+background:#2563eb;
+color:white;
+border:none;
+padding:10px 14px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.mic{
+background:#38bdf8;
+}
+
+</style>
 </head>
+
 <body>
-  <h1>NIRA WEBCHAT ACTIVO</h1>
+
+<div class="chat-container">
+
+<div class="chat-header">
+<div class="avatar">🤖</div>
+NIRA AI
+</div>
+
+<div class="messages" id="messages"></div>
+
+<div class="input-area">
+<input id="messageInput" placeholder="Pregúntale algo a NIRA..." />
+<button onclick="sendMessage()">Send</button>
+<button class="mic">🎤</button>
+</div>
+
+</div>
+
+<script>
+
+async function sendMessage(){
+
+const input = document.getElementById("messageInput")
+const text = input.value
+
+if(!text) return
+
+const messages = document.getElementById("messages")
+
+const userBubble = document.createElement("div")
+userBubble.className="bubble user"
+userBubble.innerText=text
+messages.appendChild(userBubble)
+
+input.value=""
+
+const thinking = document.createElement("div")
+thinking.className="bubble nira"
+thinking.innerText="NIRA está pensando..."
+messages.appendChild(thinking)
+
+messages.scrollTop = messages.scrollHeight
+
+const response = await fetch("/chat",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({
+email:"webuser",
+message:text
+})
+})
+
+const data = await response.json()
+
+thinking.remove()
+
+const niraBubble = document.createElement("div")
+niraBubble.className="bubble nira"
+niraBubble.innerText=data.reply
+
+messages.appendChild(niraBubble)
+
+messages.scrollTop = messages.scrollHeight
+
+}
+
+</script>
+
 </body>
 </html>
