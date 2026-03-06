@@ -123,7 +123,7 @@ NIRA AI
 
 <div class="input-area">
 <input id="messageInput" placeholder="Pregúntale algo a NIRA..." />
-<button onclick="sendMessage()">Send</button>
+<button id="sendBtn">Send</button>
 <button class="mic">🎤</button>
 </div>
 
@@ -176,7 +176,13 @@ messages.appendChild(niraBubble)
 messages.scrollTop = messages.scrollHeight
 
 }
+document.getElementById("sendBtn").addEventListener("click", sendMessage);
 
+document.getElementById("messageInput").addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    sendMessage();
+  }
+});
 </script>
 
 </body>
