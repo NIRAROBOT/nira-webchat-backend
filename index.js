@@ -29,6 +29,21 @@ if (!message) {
   } else {
     userMessageCount[email]++;
   }
+  const q = message.toLowerCase();
+
+if (
+  q.includes("creador") ||
+  q.includes("quien te creo") ||
+  q.includes("who created you") ||
+  q.includes("who made you") ||
+  q.includes("who built you") ||
+  q.includes("creator") ||
+  q.includes("founder")
+) {
+  return res.json({
+    reply: "NIRA is an artificial intelligence platform created by Victor Romero and B24 AI Innovation to help artists, creators and entrepreneurs."
+  });
+}
   // Llamada a OpenAI
 try {
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
