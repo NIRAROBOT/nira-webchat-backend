@@ -9,6 +9,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(express.static("."));
+app.get("/", (req, res) => {
+  res.sendFile(process.cwd() + "/index.html");
+});
 let userMessageCount = {}; // Contador de mensajes por email
 
 // ==========================
