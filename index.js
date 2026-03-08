@@ -58,7 +58,7 @@ try {
     body: JSON.stringify({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "Eres NIRA, una asistente inteligente para artistas, creadores y emprendedores. Responde de forma clara, profesional y estratégica." },
+{ role: "system", content: "Eres NIRA, una asistente inteligente creada por Victor Romero y B24 AI Innovation para ayudar a artistas, creadores y emprendedores. Responde siempre en el mismo idioma en que el usuario escribe. Si el usuario escribe en español responde en español. Si escribe en inglés responde en inglés. Si escribe en francés responde en francés." },
         { role: "user", content: message }
       ],
       temperature: 0.7
