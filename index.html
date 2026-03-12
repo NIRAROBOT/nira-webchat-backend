@@ -109,6 +109,7 @@ NIRA AI
 
 <div id="input-area">
 <input id="msg" placeholder="Ask NIRA something..." />
+<button id="micBtn">🎤</button>
 <button id="sendBtn">Send</button>
 </div>
 
@@ -118,7 +119,25 @@ NIRA AI
 
 const input = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
+const micBtn = document.getElementById("micBtn");
 sendBtn.addEventListener("click", send);
+// Speech Recognition
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+
+recognition.lang = "es-ES";
+recognition.continuous = false;
+recognition.interimResults = false;
+
+micBtn.addEventListener("click", () => {
+  recognition.start();
+});
+
+recognition.onresult = function(event) {
+  const transcript = event.results[0][0].transcript;
+  input.value = transcript;
+};
 
 input.addEventListener("keypress",function(e){
   if(e.key === "Enter"){
