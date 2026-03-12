@@ -129,21 +129,21 @@ const micBtn = document.getElementById("micBtn");
 sendBtn.addEventListener("click", send);
 // Speech Recognition
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
+// const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+// const recognition = new SpeechRecognition();
 
-recognition.lang = "es-ES";
-recognition.continuous = false;
-recognition.interimResults = false;
+// recognition.lang = "es-ES";
+// recognition.continuous = false;
+// recognition.interimResults = false;
 
-micBtn.addEventListener("click", () => {
-  recognition.start();
-});
+139 // micBtn.addEventListener("click", () => {
+140 //     recognition.start();
+141 // });
 
-recognition.onresult = function(event) {
-  const transcript = event.results[0][0].transcript;
-  input.value = transcript;
-};
+143 // recognition.onresult = function(event) {
+144 //     const transcript = event.results[0][0].transcript;
+145 //     input.value = transcript;
+146 // };
 
 input.addEventListener("keypress",function(e){
   if(e.key === "Enter"){
