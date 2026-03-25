@@ -124,7 +124,7 @@ NIRA AI
 
 <div id="input-area">
 <input id="msg" placeholder="Ask NIRA something..." />
-<!-- <button id="micBtn">🎤</button> -->
+<button id="micBtn">🎤</button>
 <button id="sendBtn">Send</button>
 </div>
 
@@ -136,6 +136,7 @@ const input = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
 sendBtn.addEventListener("click", send);
+micBtn.addEventListener("click", startRecording);
 // Speech Recognition
 
 // const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -197,6 +198,31 @@ async function send(){
 
   }
 
+}
+ let mediaRecorder;
+let audioChunks = [];
+
+async function startRecording() {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+  mediaRecorder = new MediaRecorder(stream);
+
+  audioChunks = [];
+
+  mediaRecorder.ondataavailable = event => {
+    audioChunks.push(event.data);
+  };
+
+  mediaRecorder.onstop = async () => {
+    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+    console.log("Audio grabado:", audioBlob);
+  };
+
+  mediaRecorder.start();
+
+  setTimeout(() => {
+    mediaRecorder.stop();
+  }, 4000);
 }
 </script>
 
