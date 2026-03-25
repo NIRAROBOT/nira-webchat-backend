@@ -217,10 +217,29 @@ async function startRecording() {
             audioChunks.push(event.data);
         };
 
-        mediaRecorder.onstop = () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            console.log("🔥 Audio grabado:", audioBlob);
-        };
+        mediaRecorder.onstop = async () => {
+    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+
+    console.log("🔥 Audio grabado:", audioBlob);
+
+    const formData = new FormData();
+    formData.append("file", audioBlob, "audio.webm");
+
+    try {
+        const response = await fetch("https://nira-webchat-backend.onrender.com/transcribe", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        console.log("🧠 Texto recibido:", data.text);
+
+        input.value = data.text;
+
+    } catch (error) {
+        console.error("❌ Error enviando audio:", error);
+    }
 
         mediaRecorder.start();
 
