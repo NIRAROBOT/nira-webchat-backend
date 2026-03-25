@@ -201,28 +201,40 @@ async function send(){
 }
  let mediaRecorder;
 let audioChunks = [];
-
 async function startRecording() {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    try {
+        console.log("🎤 Iniciando grabación...");
 
-  mediaRecorder = new MediaRecorder(stream);
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-  audioChunks = [];
+        console.log("✅ Micrófono permitido");
 
-  mediaRecorder.ondataavailable = event => {
-    audioChunks.push(event.data);
-  };
+        mediaRecorder = new MediaRecorder(stream);
 
-  mediaRecorder.onstop = async () => {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-    console.log("Audio grabado:", audioBlob);
-  };
+        audioChunks = [];
 
-  mediaRecorder.start();
+        mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+        };
 
-  setTimeout(() => {
-    mediaRecorder.stop();
-  }, 4000);
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            console.log("🔥 Audio grabado:", audioBlob);
+        };
+
+        mediaRecorder.start();
+
+        console.log("⏺ Grabando...");
+
+        setTimeout(() => {
+            mediaRecorder.stop();
+            console.log("⏹ Grabación detenida");
+        }, 4000);
+
+    } catch (error) {
+        console.error("❌ ERROR en micrófono:", error);
+        alert("Error usando el micrófono");
+    }
 }
 </script>
 
