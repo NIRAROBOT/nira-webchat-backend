@@ -119,8 +119,10 @@ LANGUAGE RULES:
 
 BEHAVIOR:
 - Be natural, clear, and helpful.
-- Maintain context of conversation.
-- Do not restart conversation.
+- Maintain context of conversation at all times.
+- Never reset the conversation.
+- Never ask again "how can I help you?" if already in a conversation.
+- Always continue from the previous message unless the user clearly changes topic.
 `
   },
 ...conversationHistory[email]
