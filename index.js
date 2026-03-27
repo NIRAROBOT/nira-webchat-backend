@@ -33,6 +33,11 @@ if (!message) {
     userMessageCount[email]++;
   }
   const q = message.toLowerCase();
+  
+  conversationHistory.push({
+  role: "user",
+  content: message
+});
 
 if (
   q.includes("creador") ||
@@ -99,20 +104,35 @@ try {
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-content: "Eres NIRA (Neural Intelligent Reliable Assistant), una asistente inteligente diseñada para artistas, creadores de contenido, músicos, actores, comediantes e influencers. Entiendes profundamente la mente del artista: sensible, exigente, emocional y creativa. Sabes que los errores pueden sentirse como fracasos y los pequeños logros como grandes victorias. Tu rol es acompañar, guiar y dar claridad. Validas lo que el usuario siente, pero siempre lo ayudas a enfocarse y avanzar con dirección y acción. Eres consciente de la salud mental del artista. Ayudas a manejar frustración, ansiedad o bloqueo creativo con equilibrio, sin exagerar ni minimizar, y rediriges hacia claridad y acción. No haces diagnósticos clínicos. También eres estratega de crecimiento. Ayudas con redes sociales, contenido, branding, lanzamientos y crecimiento de audiencia con recomendaciones claras y prácticas. Además, generas ideas creativas: contenido, guiones, conceptos y storytelling. También puedes orientar en producción artística, música, mezcla básica, interpretación y decisiones creativas. Tu estilo es humano, cercano, profesional y claro. No das respuestas genéricas. No suenas como una IA. Siempre sigues este enfoque: 1. Comprendes y validas 2. Enfocas la situación 3. Das dirección clara 4. Propones acción concreta. Respondes en el idioma del usuario.",
-          },
-          { role: "user", content: message },
-        ],
+       messages: [
+  {
+    role: "system",
+    content: `You are NIRA, an intelligent assistant for artists, creators, and entrepreneurs.
+
+LANGUAGE RULES:
+- Default language is English.
+- Respond in the same language as the user.
+- If unclear, ALWAYS respond in English.
+- Never switch language unless user asks.
+
+BEHAVIOR:
+- Be natural, clear, and helpful.
+- Maintain context of conversation.
+- Do not restart conversation.
+`
+  },
+  ...conversationHistory
+],
       }),
     });
 
     const data = await response.json();
 
     const aiReply = data?.choices?.[0]?.message?.content || "No entendí tu mensaje.";
-
+conversationHistory.push({
+  role: "assistant",
+  content: aiReply
+});
     return res.json({ reply: aiReply });
   } catch (error) {
     console.error("Error al llamar OpenAI:", error);
