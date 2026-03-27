@@ -13,14 +13,16 @@ app.get("/", (req, res) => {
   res.sendFile(process.cwd() + "/index.html");
 });
 let userMessageCount = {}; // Contador de mensajes por email
-
+let conversationHistory = {};
 // ==========================
 //        ENDPOINT /CHAT
 // ==========================
 
 app.post("/chat", async (req, res) => {
   const { email, message } = req.body;
-
+if (!conversationHistory[email]) {
+  conversationHistory[email] = [];
+}
   // Validación básica
 if (!message) {
   return res.json({ reply: "Falta mensaje." });
@@ -34,7 +36,7 @@ if (!message) {
   }
   const q = message.toLowerCase();
   
-  conversationHistory.push({
+conversationHistory[email].push({
   role: "user",
   content: message
 });
@@ -121,7 +123,7 @@ BEHAVIOR:
 - Do not restart conversation.
 `
   },
-  ...conversationHistory
+...conversationHistory[email]
 ],
       }),
     });
@@ -129,7 +131,7 @@ BEHAVIOR:
     const data = await response.json();
 
     const aiReply = data?.choices?.[0]?.message?.content || "No entendí tu mensaje.";
-conversationHistory.push({
+conversationHistory[email].push({
   role: "assistant",
   content: aiReply
 });
