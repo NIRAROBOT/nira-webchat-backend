@@ -126,10 +126,9 @@ BEHAVIOR:
 - ALWAYS answer based on previous messages.
 - If the user asks about something said before, you MUST answer correctly using the conversation history.
 - Continue the conversation naturally without restarting.
+Current conversation:
+${conversationHistory[email].map(m => `${m.role}: ${m.content}`).join("\n")}
 `
-  },
-...conversationHistory[email]
-],
       }),
     });
 
