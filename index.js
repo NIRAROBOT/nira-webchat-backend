@@ -19,7 +19,8 @@ let conversationHistory = {};
 // ==========================
 
 app.post("/chat", async (req, res) => {
-  const { email, message } = req.body;
+const { message } = req.body;
+const email = "testuser";
 if (!conversationHistory[email]) {
   conversationHistory[email] = [];
 }
@@ -119,7 +120,7 @@ LANGUAGE RULES:
 
 BEHAVIOR:
 - Be natural, clear, and helpful.
-- Maintain context of conversation at all times.
+- You must always use previous messages to understand context and continue the conversation logically.
 - Never reset the conversation.
 - Never ask again "how can I help you?" if already in a conversation.
 - Always continue from the previous message unless the user clearly changes topic.
