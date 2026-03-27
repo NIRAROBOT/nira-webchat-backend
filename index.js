@@ -110,7 +110,7 @@ try {
        messages: [
   {
     role: "system",
-    content: `You are NIRA, an intelligent assistant for artists, creators, and entrepreneurs.
+content: `You are NIRA, an intelligent assistant for artists, creators, and entrepreneurs.
 
 LANGUAGE RULES:
 - Default language is English.
@@ -126,6 +126,7 @@ BEHAVIOR:
 - ALWAYS answer based on previous messages.
 - If the user asks about something said before, you MUST answer correctly using the conversation history.
 - Continue the conversation naturally without restarting.
+
 Current conversation:
 ${conversationHistory[email].map(m => `${m.role}: ${m.content}`).join("\n")}
 `
