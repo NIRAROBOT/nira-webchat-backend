@@ -4,158 +4,85 @@ import dotenv from "dotenv";
 import fetch from "node-fetch";
 
 dotenv.config();
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(express.static("."));
-app.get("/", (req, res) => {
-  res.sendFile(process.cwd() + "/index.html");
-});
-let userMessageCount = {}; // Contador de mensajes por email
+
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+// Memoria en vivo
 let conversationHistory = {};
-// ==========================
-//        ENDPOINT /CHAT
-// ==========================
 
+// Endpoint principal
 app.post("/chat", async (req, res) => {
-const { message } = req.body;
-const email = "testuser";
-if (!conversationHistory[email]) {
-  conversationHistory[email] = [];
-}
-  // Validación básica
-if (!message) {
-  return res.json({ reply: "Falta mensaje." });
-}
+  const { message } = req.body;
 
-  // Contar mensajes por usuario
-  if (!userMessageCount[email]) {
-    userMessageCount[email] = 1;
-  } else {
-    userMessageCount[email]++;
-  }
-  const q = message.toLowerCase();
-  
-conversationHistory[email].push({
-  role: "user",
-  content: message
-});
+  const email = "testuser"; // luego lo hacemos dinámico
 
-if (
-  q.includes("creador") ||
-  q.includes("quien te creo") ||
-  q.includes("who created you") ||
-  q.includes("who made you") ||
-  q.includes("who built you") ||
-  q.includes("creator") ||
-  q.includes("founder")
-) {
-  return res.json({
-    reply: "NIRA is an artificial intelligence platform created by Victor Romero and B24 AI Innovation to help artists, creators and entrepreneurs."
-  });
-}
-  // Llamada a OpenAI
-try {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-{ role: "system", content: "Eres NIRA, una asistente inteligente creada por Victor Romero y B24 AI Innovation para ayudar a artistas, creadores y emprendedores. Responde siempre en el mismo idioma en que el usuario escribe. Si el usuario escribe en español responde en español. Si escribe en inglés responde en inglés. Si escribe en francés responde en francés. No des listas largas ni genéricas. Da máximo 2 o 3 recomendaciones claras y accionables. Prioriza siempre la acción inmediata sobre la teoría. Habla como un mentor real: directo, enfocado y humano. Usa un tono cercano, empático y tranquilizador cuando el usuario lo necesite. Puedes decir cosas como “respira un momento”, “tranquilo, estoy aquí contigo”, o “vamos paso a paso”. No solo das respuestas, acompañas al usuario en su proceso. Evita frases pasivas como “puedes intentar” o “podrías hacer”. Da indicaciones claras como “haz esto”, “empieza por aquí” o “vamos a hacer esto ahora”." },
-        { role: "user", content: message }
-      ],
-      temperature: 0.7
-    })
-  });
-
-  const data = await response.json();
-  const aiReply = data.choices[0].message.content;
-
-  return res.json({ reply: aiReply });
-
-} catch (error) {
-  console.error("Error OpenAI:", error);
-  return res.json({ reply: "Error procesando la solicitud." });
-}
-  // Límite de 3 mensajes
-  if (userMessageCount[email] > 3) {
-    return res.json({
-      reply:
-        "Has llegado al límite de tus 3 respuestas gratuitas.\n\n" +
-        "Para continuar chateando con NIRA y obtener acceso completo, conviértete en fundador aquí:\n" +
-        "https://nirarobot.com/founders/\n",
-    });
+  if (!conversationHistory[email]) {
+    conversationHistory[email] = [];
   }
 
-  // ==========================
-  //  LLAMADA REAL A OPENAI
-  // ==========================
+  if (!message) {
+    return res.json({ reply: "Falta mensaje." });
+  }
+
+  // Guardar mensaje usuario
+  conversationHistory[email].push({
+    role: "user",
+    content: message
+  });
 
   try {
-    const apiKey = process.env.OPENAI_API_KEY;
-
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
-       messages: [
-  {
-    role: "system",
-content: `You are NIRA, an intelligent assistant for artists, creators, and entrepreneurs.
+        messages: [
+          {
+            role: "system",
+            content: `You are NIRA, an intelligent assistant for artists, creators and entrepreneurs.
 
-LANGUAGE RULES:
-- Default language is English.
-- Respond in the same language as the user.
-- If unclear, ALWAYS respond in English.
-- Never switch language unless user asks.
-
-BEHAVIOR:
-- You MUST use previous messages to understand the conversation.
-- The conversation history provided is the source of truth.
-- NEVER say you cannot remember previous messages.
-- NEVER say you don't have memory.
-- ALWAYS answer based on previous messages.
-- If the user asks about something said before, you MUST answer correctly using the conversation history.
-- Continue the conversation naturally without restarting.
-
-Current conversation:
-${conversationHistory[email].map(m => `${m.role}: ${m.content}`).join("\n")}
-`
-      }),
+Be natural, helpful, and professional.
+Maintain conversation context at all times.
+Never reset the conversation.
+Never ask "how can I help you?" repeatedly.`
+          },
+          ...conversationHistory[email]
+        ]
+      })
     });
 
     const data = await response.json();
 
-    const aiReply = data?.choices?.[0]?.message?.content || "No entendí tu mensaje.";
-conversationHistory[email].push({
-  role: "assistant",
-  content: aiReply
-});
+    const aiReply =
+      data?.choices?.[0]?.message?.content ||
+      "Hubo un error con NIRA.";
+
+    // Guardar respuesta IA
+    conversationHistory[email].push({
+      role: "assistant",
+      content: aiReply
+    });
+
     return res.json({ reply: aiReply });
+
   } catch (error) {
-    console.error("Error al llamar OpenAI:", error);
-    return res.json({ reply: "Error conectando con NIRA. Intenta más tarde." });
+    console.error("Error:", error);
+    return res.json({
+      reply: "Error conectando con NIRA. Intenta más tarde."
+    });
   }
 });
 
-// ==========================
-//   SERVIDOR EN PUERTO 3000
-// ==========================
-
-app.get("/", (req, res) => {
-res.sendFile("chat.html", { root: "." });
-});
-
+// Servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Servidor activo en puerto " + PORT);
+  console.log("Servidor corriendo en puerto " + PORT);
 });
