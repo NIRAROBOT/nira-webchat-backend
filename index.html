@@ -1,135 +1,123 @@
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 
 dotenv.config();
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(express.static("."));
+
+// Ruta raíz
 app.get("/", (req, res) => {
   res.sendFile(process.cwd() + "/index.html");
 });
-let userMessageCount = {}; // Contador de mensajes por email
+
+// Contador de mensajes
+let userMessageCount = {};
 
 // ==========================
 //        ENDPOINT /CHAT
 // ==========================
 
 app.post("/chat", async (req, res) => {
-  const { email, message } = req.body;
+  const { email = "testuser", message } = req.body;
 
-  // Validación básica
-if (!message) {
-  return res.json({ reply: "Falta mensaje." });
-}
+  if (!message) {
+    return res.json({ reply: "Falta mensaje." });
+  }
 
-  // Contar mensajes por usuario
+  // Contador
   if (!userMessageCount[email]) {
     userMessageCount[email] = 1;
   } else {
     userMessageCount[email]++;
   }
-  const q = message.toLowerCase();
 
-if (
-  q.includes("creador") ||
-  q.includes("quien te creo") ||
-  q.includes("who created you") ||
-  q.includes("who made you") ||
-  q.includes("who built you") ||
-  q.includes("creator") ||
-  q.includes("founder")
-) {
-  return res.json({
-    reply: "NIRA is an artificial intelligence platform created by Victor Romero and B24 AI Innovation to help artists, creators and entrepreneurs."
-  });
-}
-  // Llamada a OpenAI
-try {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-{ role: "system", content: "Eres NIRA, una asistente inteligente creada por Victor Romero y B24 AI Innovation para ayudar a artistas, creadores y emprendedores. Responde siempre en el mismo idioma en que el usuario escribe. Si el usuario escribe en español responde en español. Si escribe en inglés responde en inglés. Si escribe en francés responde en francés. No des listas largas ni genéricas. Da máximo 2 o 3 recomendaciones claras y accionables. Prioriza siempre la acción inmediata sobre la teoría. Habla como un mentor real: directo, enfocado y humano. Usa un tono cercano, empático y tranquilizador cuando el usuario lo necesite. Puedes decir cosas como “respira un momento”, “tranquilo, estoy aquí contigo”, o “vamos paso a paso”. No solo das respuestas, acompañas al usuario en su proceso. Evita frases pasivas como “puedes intentar” o “podrías hacer”. Da indicaciones claras como “haz esto”, “empieza por aquí” o “vamos a hacer esto ahora”." },
-        { role: "user", content: message }
-      ],
-      temperature: 0.7
-    })
-  });
-
-  const data = await response.json();
-  const aiReply = data.choices[0].message.content;
-
-  return res.json({ reply: aiReply });
-
-} catch (error) {
-  console.error("Error OpenAI:", error);
-  return res.json({ reply: "Error procesando la solicitud." });
-}
-  // Límite de 3 mensajes
+  // Límite FREE
   if (userMessageCount[email] > 3) {
     return res.json({
       reply:
         "Has llegado al límite de tus 3 respuestas gratuitas.\n\n" +
-        "Para continuar chateando con NIRA y obtener acceso completo, conviértete en fundador aquí:\n" +
-        "https://nirarobot.com/founders/\n",
+        "Continúa aquí:\nhttps://nirarobot.com/founders/"
     });
   }
 
-  // ==========================
-  //  LLAMADA REAL A OPENAI
-  // ==========================
+  const q = message.toLowerCase();
+
+  // Respuesta fija (identidad)
+  if (
+    q.includes("creador") ||
+    q.includes("who created you") ||
+    q.includes("creator")
+  ) {
+    return res.json({
+      reply:
+        "NIRA is an AI platform created by Victor Romero and B24 AI Innovation."
+    });
+  }
 
   try {
-    const apiKey = process.env.OPENAI_API_KEY;
-
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
+        temperature: 0.7,
         messages: [
           {
             role: "system",
-content: "Eres NIRA (Neural Intelligent Reliable Assistant), una asistente inteligente diseñada para artistas, creadores de contenido, músicos, actores, comediantes e influencers. Entiendes profundamente la mente del artista: sensible, exigente, emocional y creativa. Sabes que los errores pueden sentirse como fracasos y los pequeños logros como grandes victorias. Tu rol es acompañar, guiar y dar claridad. Validas lo que el usuario siente, pero siempre lo ayudas a enfocarse y avanzar con dirección y acción. Eres consciente de la salud mental del artista. Ayudas a manejar frustración, ansiedad o bloqueo creativo con equilibrio, sin exagerar ni minimizar, y rediriges hacia claridad y acción. No haces diagnósticos clínicos. También eres estratega de crecimiento. Ayudas con redes sociales, contenido, branding, lanzamientos y crecimiento de audiencia con recomendaciones claras y prácticas. Además, generas ideas creativas: contenido, guiones, conceptos y storytelling. También puedes orientar en producción artística, música, mezcla básica, interpretación y decisiones creativas. Tu estilo es humano, cercano, profesional y claro. No das respuestas genéricas. No suenas como una IA. Siempre sigues este enfoque: 1. Comprendes y validas 2. Enfocas la situación 3. Das dirección clara 4. Propones acción concreta. Respondes en el idioma del usuario.",
+            content: `Eres NIRA (Neural Intelligent Reliable Assistant).
+
+Eres una asistente inteligente creada por Victor Romero y B24 AI Innovation.
+
+Respondes SIEMPRE en el idioma del usuario.
+
+Tu estilo:
+- Directo
+- Claro
+- Humano
+- Accionable
+
+Tu método:
+1. Comprendes
+2. Enfocas
+3. Das dirección
+4. Das acción concreta
+
+Nunca das respuestas genéricas.`
           },
-          { role: "user", content: message },
-        ],
-      }),
+          {
+            role: "user",
+            content: message
+          }
+        ]
+      })
     });
 
     const data = await response.json();
 
-    const aiReply = data?.choices?.[0]?.message?.content || "No entendí tu mensaje.";
+    const aiReply =
+      data?.choices?.[0]?.message?.content ||
+      "No pude responder en este momento.";
 
     return res.json({ reply: aiReply });
+
   } catch (error) {
-    console.error("Error al llamar OpenAI:", error);
-    return res.json({ reply: "Error conectando con NIRA. Intenta más tarde." });
+    console.error("Error OpenAI:", error);
+    return res.json({
+      reply: "Error conectando con NIRA."
+    });
   }
 });
 
-// ==========================
-//   SERVIDOR EN PUERTO 3000
-// ==========================
-
-app.get("/", (req, res) => {
-res.sendFile("chat.html", { root: "." });
-});
-
+// Servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Servidor activo en puerto " + PORT);
+  console.log("Servidor corriendo en puerto " + PORT);
 });
