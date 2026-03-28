@@ -49,7 +49,7 @@ Maintain conversation context at all times.
 Never reset the conversation.
 Never ask "how can I help you?" repeatedly.`
         },
-        ...conversationHistory[email]
+        ...conversationHistory[email].slice(-6)
       ]
     });
 
