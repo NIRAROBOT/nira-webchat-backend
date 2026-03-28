@@ -1,112 +1,75 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import fetch from "node-fetch";
+import OpenAI from "openai";
 
 dotenv.config();
 
 const app = express();
-
 app.use(express.json());
 app.use(cors());
 app.use(express.static("."));
 
-// Ruta raíz: sirve index.html
-app.get("/", (req, res) => {
-  res.sendFile(process.cwd() + "/index.html");
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
 });
 
-// Contador de mensajes por usuario
-let userMessageCount = {};
+// Memoria en vivo
+let conversationHistory = {};
 
 // Endpoint principal
 app.post("/chat", async (req, res) => {
-  const { email = "testuser", message } = req.body;
+  const { message } = req.body;
+  const email = "testuser"; // luego dinámico
+
+  if (!conversationHistory[email]) {
+    conversationHistory[email] = [];
+  }
 
   if (!message) {
     return res.json({ reply: "Falta mensaje." });
   }
 
-  if (!userMessageCount[email]) {
-    userMessageCount[email] = 1;
-  } else {
-    userMessageCount[email]++;
-  }
-
-  // Límite free
-  if (userMessageCount[email] > 3) {
-    return res.json({
-      reply:
-        "Has llegado al límite de tus 3 respuestas gratuitas.\n\nContinúa aquí:\nhttps://nirarobot.com/founders/"
-    });
-  }
-
-  const q = message.toLowerCase();
-
-  // Respuesta fija de identidad
-  if (
-    q.includes("creador") ||
-    q.includes("quien te creo") ||
-    q.includes("who created you") ||
-    q.includes("who made you") ||
-    q.includes("who built you") ||
-    q.includes("creator") ||
-    q.includes("founder")
-  ) {
-    return res.json({
-      reply:
-        "NIRA is an artificial intelligence platform created by Victor Romero and B24 AI Innovation to help artists, creators and entrepreneurs."
-    });
-  }
+  // Guardar mensaje usuario
+  conversationHistory[email].push({
+    role: "user",
+    content: message
+  });
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        temperature: 0.7,
-        messages: [
-          {
-            role: "system",
-            content: `You are NIRA (Neural Intelligent Reliable Assistant), an intelligent assistant created by Victor Romero and B24 AI Innovation.
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `You are NIRA, an intelligent assistant for artists, creators and entrepreneurs.
 
-Always reply in the same language as the user.
-If the user writes in Spanish, reply in Spanish.
-If the user writes in English, reply in English.
-If the user writes in French, reply in French.
-
-Your style:
-- clear
-- direct
-- human
-- actionable
-
-You help artists, creators and entrepreneurs.
-Avoid generic answers.
-Give practical next steps.`
-          },
-          {
-            role: "user",
-            content: message
-          }
-        ]
-      })
+Be natural, helpful, and professional.
+Maintain conversation context at all times.
+Never reset the conversation.
+Never ask "how can I help you?" repeatedly.`
+        },
+        ...conversationHistory[email]
+      ]
     });
 
-    const data = await response.json();
-
     const aiReply =
-      data?.choices?.[0]?.message?.content ||
-      "No pude responder en este momento.";
+      completion.choices[0]?.message?.content ||
+      "Hubo un error con NIRA.";
+
+    // Guardar respuesta IA
+    conversationHistory[email].push({
+      role: "assistant",
+      content: aiReply
+    });
 
     return res.json({ reply: aiReply });
+
   } catch (error) {
-    console.error("Error OpenAI:", error);
-    return res.json({ reply: "Error conectando con NIRA." });
+    console.error("Error:", error);
+    return res.json({
+      reply: "Error conectando con NIRA. Intenta más tarde."
+    });
   }
 });
 
