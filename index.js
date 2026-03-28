@@ -16,6 +16,11 @@ const client = new OpenAI({
 // Memoria en vivo
 let conversationHistory = {};
 
+// Ruta raíz (para evitar "Cannot GET /")
+app.get("/", (req, res) => {
+  res.send("NIRA backend funcionando 🚀");
+});
+
 // Endpoint principal
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
