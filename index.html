@@ -1,123 +1,147 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import fetch from "node-fetch";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NIRA Chat</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+    }
 
-dotenv.config();
+    .wrapper {
+      max-width: 760px;
+      margin: 30px auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
 
-const app = express();
-app.use(express.json());
-app.use(cors());
-app.use(express.static("."));
+    .header {
+      padding: 16px 20px;
+      font-size: 22px;
+      font-weight: bold;
+      border-bottom: 1px solid #eee;
+    }
 
-// Ruta raíz
-app.get("/", (req, res) => {
-  res.sendFile(process.cwd() + "/index.html");
-});
+    #chat {
+      height: 500px;
+      overflow-y: auto;
+      padding: 20px;
+      background: #fff;
+    }
 
-// Contador de mensajes
-let userMessageCount = {};
+    .msg {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      max-width: 80%;
+    }
 
-// ==========================
-//        ENDPOINT /CHAT
-// ==========================
+    .user {
+      background: #2563eb;
+      color: white;
+      margin-left: auto;
+      text-align: right;
+    }
 
-app.post("/chat", async (req, res) => {
-  const { email = "testuser", message } = req.body;
+    .assistant {
+      background: #e5e7eb;
+      color: black;
+      margin-right: auto;
+    }
 
-  if (!message) {
-    return res.json({ reply: "Falta mensaje." });
-  }
+    .input-row {
+      display: flex;
+      gap: 10px;
+      padding: 16px;
+      border-top: 1px solid #eee;
+      background: #fafafa;
+    }
 
-  // Contador
-  if (!userMessageCount[email]) {
-    userMessageCount[email] = 1;
-  } else {
-    userMessageCount[email]++;
-  }
+    #messageInput {
+      flex: 1;
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
 
-  // Límite FREE
-  if (userMessageCount[email] > 3) {
-    return res.json({
-      reply:
-        "Has llegado al límite de tus 3 respuestas gratuitas.\n\n" +
-        "Continúa aquí:\nhttps://nirarobot.com/founders/"
-    });
-  }
+    button {
+      padding: 14px 18px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-  const q = message.toLowerCase();
+    button:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">NIRA</div>
 
-  // Respuesta fija (identidad)
-  if (
-    q.includes("creador") ||
-    q.includes("who created you") ||
-    q.includes("creator")
-  ) {
-    return res.json({
-      reply:
-        "NIRA is an AI platform created by Victor Romero and B24 AI Innovation."
-    });
-  }
+    <div id="chat"></div>
 
-  try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        temperature: 0.7,
-        messages: [
-          {
-            role: "system",
-            content: `Eres NIRA (Neural Intelligent Reliable Assistant).
+    <div class="input-row">
+      <input id="messageInput" type="text" placeholder="Write your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
 
-Eres una asistente inteligente creada por Victor Romero y B24 AI Innovation.
+  <script>
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("messageInput");
 
-Respondes SIEMPRE en el idioma del usuario.
+    function addMessage(text, sender) {
+      const div = document.createElement("div");
+      div.className = "msg " + sender;
+      div.textContent = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-Tu estilo:
-- Directo
-- Claro
-- Humano
-- Accionable
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message) return;
 
-Tu método:
-1. Comprendes
-2. Enfocas
-3. Das dirección
-4. Das acción concreta
+      addMessage(message, "user");
+      input.value = "";
 
-Nunca das respuestas genéricas.`
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
           },
-          {
-            role: "user",
-            content: message
-          }
-        ]
-      })
+          body: JSON.stringify({
+            message: message
+          })
+        });
+
+        const data = await response.json();
+        addMessage(data.reply || "No reply received.", "assistant");
+      } catch (error) {
+        addMessage("Error conectando con NIRA.", "assistant");
+      }
+    }
+
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
     });
-
-    const data = await response.json();
-
-    const aiReply =
-      data?.choices?.[0]?.message?.content ||
-      "No pude responder en este momento.";
-
-    return res.json({ reply: aiReply });
-
-  } catch (error) {
-    console.error("Error OpenAI:", error);
-    return res.json({
-      reply: "Error conectando con NIRA."
-    });
-  }
-});
-
-// Servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log("Servidor corriendo en puerto " + PORT);
-});
+  </script>
+</body>
+</html>
