@@ -8,7 +8,6 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use(express.static("."));
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -20,7 +19,7 @@ let conversationHistory = {};
 // Endpoint principal
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
-  const email = "testuser"; // luego dinámico
+  const email = "testuser";
 
   if (!conversationHistory[email]) {
     conversationHistory[email] = [];
@@ -49,13 +48,13 @@ Maintain conversation context at all times.
 Never reset the conversation.
 Never ask "how can I help you?" repeatedly.`
         },
-        ...conversationHistory[email].slice(-6)
+        ...conversationHistory[email].slice(-10)
       ]
     });
 
     const aiReply =
       completion.choices[0]?.message?.content ||
-      "Hubo un error con NIRA.";
+      "Error con NIRA.";
 
     // Guardar respuesta IA
     conversationHistory[email].push({
@@ -68,7 +67,7 @@ Never ask "how can I help you?" repeatedly.`
   } catch (error) {
     console.error("Error:", error);
     return res.json({
-      reply: "Error conectando con NIRA. Intenta más tarde."
+      reply: "Error conectando con NIRA."
     });
   }
 });
