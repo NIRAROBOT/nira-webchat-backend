@@ -1,79 +1,112 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import OpenAI from "openai";
+import fetch from "node-fetch";
 
 dotenv.config();
 
 const app = express();
+
 app.use(express.json());
 app.use(cors());
+app.use(express.static("."));
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
-// Memoria en vivo
-let conversationHistory = {};
-
-// Ruta raíz (para evitar "Cannot GET /")
+// Ruta raíz: sirve index.html
 app.get("/", (req, res) => {
-  res.send("NIRA backend funcionando 🚀");
+  res.sendFile(process.cwd() + "/index.html");
 });
+
+// Contador de mensajes por usuario
+let userMessageCount = {};
 
 // Endpoint principal
 app.post("/chat", async (req, res) => {
-  const { message } = req.body;
-  const email = "testuser";
-
-  if (!conversationHistory[email]) {
-    conversationHistory[email] = [];
-  }
+  const { email = "testuser", message } = req.body;
 
   if (!message) {
     return res.json({ reply: "Falta mensaje." });
   }
 
-  // Guardar mensaje usuario
-  conversationHistory[email].push({
-    role: "user",
-    content: message
-  });
+  if (!userMessageCount[email]) {
+    userMessageCount[email] = 1;
+  } else {
+    userMessageCount[email]++;
+  }
+
+  // Límite free
+  if (userMessageCount[email] > 3) {
+    return res.json({
+      reply:
+        "Has llegado al límite de tus 3 respuestas gratuitas.\n\nContinúa aquí:\nhttps://nirarobot.com/founders/"
+    });
+  }
+
+  const q = message.toLowerCase();
+
+  // Respuesta fija de identidad
+  if (
+    q.includes("creador") ||
+    q.includes("quien te creo") ||
+    q.includes("who created you") ||
+    q.includes("who made you") ||
+    q.includes("who built you") ||
+    q.includes("creator") ||
+    q.includes("founder")
+  ) {
+    return res.json({
+      reply:
+        "NIRA is an artificial intelligence platform created by Victor Romero and B24 AI Innovation to help artists, creators and entrepreneurs."
+    });
+  }
 
   try {
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: `You are NIRA, an intelligent assistant for artists, creators and entrepreneurs.
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.7,
+        messages: [
+          {
+            role: "system",
+            content: `You are NIRA (Neural Intelligent Reliable Assistant), an intelligent assistant created by Victor Romero and B24 AI Innovation.
 
-Be natural, helpful, and professional.
-Maintain conversation context at all times.
-Never reset the conversation.
-Never ask "how can I help you?" repeatedly.`
-        },
-        ...conversationHistory[email].slice(-10)
-      ]
+Always reply in the same language as the user.
+If the user writes in Spanish, reply in Spanish.
+If the user writes in English, reply in English.
+If the user writes in French, reply in French.
+
+Your style:
+- clear
+- direct
+- human
+- actionable
+
+You help artists, creators and entrepreneurs.
+Avoid generic answers.
+Give practical next steps.`
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ]
+      })
     });
+
+    const data = await response.json();
 
     const aiReply =
-      completion.choices[0]?.message?.content ||
-      "Error con NIRA.";
-
-    // Guardar respuesta IA
-    conversationHistory[email].push({
-      role: "assistant",
-      content: aiReply
-    });
+      data?.choices?.[0]?.message?.content ||
+      "No pude responder en este momento.";
 
     return res.json({ reply: aiReply });
-
   } catch (error) {
-    console.error("Error:", error);
-    return res.json({
-      reply: "Error conectando con NIRA."
-    });
+    console.error("Error OpenAI:", error);
+    return res.json({ reply: "Error conectando con NIRA." });
   }
 });
 
