@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import OpenAI from "openai";
+import fetch from "node-fetch";
 
 dotenv.config();
 
@@ -10,9 +10,7 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static("."));
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 // Memoria en vivo
 let conversationHistory = {};
@@ -20,7 +18,8 @@ let conversationHistory = {};
 // Endpoint principal
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
-  const email = "testuser"; // luego dinámico
+
+  const email = "testuser"; // luego lo hacemos dinámico
 
   if (!conversationHistory[email]) {
     conversationHistory[email] = [];
@@ -37,24 +36,33 @@ app.post("/chat", async (req, res) => {
   });
 
   try {
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: `You are NIRA, an intelligent assistant for artists, creators and entrepreneurs.
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You are NIRA, an intelligent assistant for artists, creators and entrepreneurs.
 
 Be natural, helpful, and professional.
 Maintain conversation context at all times.
 Never reset the conversation.
 Never ask "how can I help you?" repeatedly.`
-        },
-        ...conversationHistory[email]
-      ]
+          },
+          ...conversationHistory[email]
+        ]
+      })
     });
 
+    const data = await response.json();
+
     const aiReply =
-      completion.choices[0]?.message?.content ||
+      data?.choices?.[0]?.message?.content ||
       "Hubo un error con NIRA.";
 
     // Guardar respuesta IA
@@ -78,4 +86,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Servidor corriendo en puerto " + PORT);
 });
-
