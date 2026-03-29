@@ -7,39 +7,43 @@
 
 <style>
 body{
-background:#f2f6fb;
-font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
+  background:#f2f6fb;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
 }
 
 #chat-container{
- width:95vw;
-max-width:700px;
-height:92vh;
-background:white;
-color:black;
-border-radius:12px;
-display:flex;
-flex-direction:column;
-box-shadow:0 0 40px rgba(0,0,0,.2);
+  width:95vw;
+  max-width:700px;
+  height:92vh;
+  background:white;
+  color:black;
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 0 40px rgba(0,0,0,.2);
 }
+
 .avatar {
-width:36px;
-height:36px;
-border-radius:50%;
-object-fit:cover;
-margin-right:8px;
-vertical-align:middle;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-right:8px;
+  vertical-align:middle;
 }
+
 #header{
   padding:18px;
-  border-bottom:1px solid #333;
+  border-bottom:1px solid #ddd;
   font-size:20px;
   font-weight:600;
+  display:flex;
+  align-items:center;
 }
 
 #messages{
@@ -59,14 +63,15 @@ vertical-align:middle;
   align-self:flex-end;
   max-width:70%;
 }
+
 .bot{
-background:transparent;
-padding:0;
-border-radius:0;
-max-width:100%;
-color:#111;
-font-size:16px;
- white-space: pre-wrap;
+  background:transparent;
+  padding:0;
+  border-radius:0;
+  max-width:100%;
+  color:#111;
+  font-size:16px;
+  white-space:pre-wrap;
 }
 
 #input-area{
@@ -74,31 +79,30 @@ font-size:16px;
   width:100%;
   align-items:center;
   gap:10px;
-  border-top:1px solid #333;
+  border-top:1px solid #ddd;
   padding:12px;
   box-sizing:border-box;
 }
 
 #msg{
-flex:1;
-min-width:0;
-box-sizing:border-box;
-background:white;
-border:1px solid #ccc;
-color:black;
-padding:14px;
-border-radius:8px;
-outline:none;
-font-size:16px;
-min-height:44px;
+  flex:1;
+  min-width:0;
+  box-sizing:border-box;
+  background:white;
+  border:1px solid #ccc;
+  color:black;
+  padding:14px;
+  border-radius:8px;
+  outline:none;
+  font-size:16px;
+  min-height:44px;
 }
 
 button{
   background:#2563eb;
   border:none;
   color:white;
-  padding:12px 20px;
-  margin-left:10px;
+  padding:12px 16px;
   border-radius:8px;
   cursor:pointer;
   flex-shrink:0;
@@ -116,16 +120,16 @@ button:hover{
 <div id="chat-container">
 
 <div id="header">
-<img src="nira-avatar.png" class="avatar">
-NIRA AI
+  <img src="nira-avatar.png" class="avatar">
+  NIRA AI
 </div>
 
 <div id="messages"></div>
 
 <div id="input-area">
-<input id="msg" placeholder="Ask NIRA something..." />
-<button id="micBtn">🎤</button>
-<button id="sendBtn">Send</button>
+  <input id="msg" placeholder="Ask NIRA something..." />
+  <button id="micBtn">🎤</button>
+  <button id="sendBtn">Send</button>
 </div>
 
 </div>
@@ -135,43 +139,29 @@ NIRA AI
 const input = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
+const messages = document.getElementById("messages");
+
+// EVENTOS
 sendBtn.addEventListener("click", send);
-micBtn.addEventListener("click", startRecording);
-// Speech Recognition
 
-// const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-// const recognition = new SpeechRecognition();
-
-// recognition.lang = "es-ES";
-// recognition.continuous = false;
-// recognition.interimResults = false;
-
-139 // micBtn.addEventListener("click", () => {
-140 //     recognition.start();
-141 // });
-
-143 // recognition.onresult = function(event) {
-144 //     const transcript = event.results[0][0].transcript;
-145 //     input.value = transcript;
-146 // };
-
-input.addEventListener("keypress",function(e){
+input.addEventListener("keypress", function(e){
   if(e.key === "Enter"){
     send();
   }
 });
 
+// 🔥 FUNCIÓN PRINCIPAL
 async function send(){
 
-  let text = input.value;
-
+  let text = input.value.trim();
   if(!text) return;
 
-  let messages = document.getElementById("messages");
-
+  // Mostrar usuario
   messages.innerHTML += `<div class="user">${text}</div>`;
-
   input.value = "";
+
+  // Scroll inmediato
+  messages.scrollTop = messages.scrollHeight;
 
   try{
 
@@ -182,12 +172,16 @@ async function send(){
         headers:{
           "Content-Type":"application/json"
         },
-        body: JSON.stringify({email:"demo@nira.com", message:text})
+        body: JSON.stringify({
+          email:"demo@nira.com",
+          message:text
+        })
       }
     );
 
     let data = await res.json();
 
+    // Mostrar respuesta
     messages.innerHTML += `<div class="bot">${data.reply}</div>`;
 
     messages.scrollTop = messages.scrollHeight;
@@ -195,35 +189,46 @@ async function send(){
   }catch(error){
 
     messages.innerHTML += `<div class="bot">Server not responding</div>`;
+    messages.scrollTop = messages.scrollHeight;
 
   }
-
 }
- let mediaRecorder;
+
+// 🎤 MIC (dejado funcional pero simple)
+let mediaRecorder;
 let audioChunks = [];
 
 async function startRecording() {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-  mediaRecorder = new MediaRecorder(stream);
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-  audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
 
-  mediaRecorder.ondataavailable = event => {
-    audioChunks.push(event.data);
-  };
+    mediaRecorder.ondataavailable = event => {
+      audioChunks.push(event.data);
+    };
 
-  mediaRecorder.onstop = async () => {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-    console.log("Audio grabado:", audioBlob);
-  };
+    mediaRecorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      console.log("Audio grabado:", audioBlob);
+    };
 
-  mediaRecorder.start();
+    mediaRecorder.start();
 
-  setTimeout(() => {
-    mediaRecorder.stop();
-  }, 4000);
+    setTimeout(() => {
+      mediaRecorder.stop();
+    }, 4000);
+
+  }catch(err){
+    console.log("Mic error:", err);
+  }
 }
+
+// EVENTO MIC
+micBtn.addEventListener("click", startRecording);
+
 </script>
 
 </body>
