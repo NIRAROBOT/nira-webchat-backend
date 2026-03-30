@@ -67,8 +67,6 @@ STRICT RULES:
 - Always act as NIRA
 `;
 
-Make sure to always respond in the same language as the user.
-
 // 🔍 Detectar idioma simple
 function detectLanguage(text) {
   const spanishWords = ["hola", "gracias", "quiero", "puedo", "ayuda"];
