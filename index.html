@@ -141,7 +141,7 @@ const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
 const messages = document.getElementById("messages");
 
-// EVENTOS
+// 🔥 ENVIAR MENSAJE
 sendBtn.addEventListener("click", send);
 
 input.addEventListener("keypress", function(e){
@@ -150,17 +150,13 @@ input.addEventListener("keypress", function(e){
   }
 });
 
-// 🔥 FUNCIÓN PRINCIPAL
 async function send(){
 
   let text = input.value.trim();
   if(!text) return;
 
-  // Mostrar usuario
   messages.innerHTML += `<div class="user">${text}</div>`;
   input.value = "";
-
-  // Scroll inmediato
   messages.scrollTop = messages.scrollHeight;
 
   try{
@@ -181,38 +177,61 @@ async function send(){
 
     let data = await res.json();
 
-    // Mostrar respuesta
     messages.innerHTML += `<div class="bot">${data.reply}</div>`;
-
     messages.scrollTop = messages.scrollHeight;
 
   }catch(error){
-
     messages.innerHTML += `<div class="bot">Server not responding</div>`;
-    messages.scrollTop = messages.scrollHeight;
-
   }
 }
 
-// 🎤 MIC (dejado funcional pero simple)
+// 🎤 MIC FUNCIONAL CON WHISPER
 let mediaRecorder;
 let audioChunks = [];
 
 async function startRecording() {
 
-  try{
+  try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
     mediaRecorder = new MediaRecorder(stream);
     audioChunks = [];
+
+    micBtn.innerText = "🎙️";
 
     mediaRecorder.ondataavailable = event => {
       audioChunks.push(event.data);
     };
 
     mediaRecorder.onstop = async () => {
+
+      micBtn.innerText = "🎤";
+
       const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      console.log("Audio grabado:", audioBlob);
+
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "recording.webm");
+
+      try {
+
+        const res = await fetch(
+          "https://nira-webchat-backend.onrender.com/transcribe",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+
+        const data = await res.json();
+
+        input.value = data.text;
+
+        // 🔥 auto enviar
+        send();
+
+      } catch (err) {
+        console.log("Transcription error:", err);
+      }
     };
 
     mediaRecorder.start();
@@ -221,12 +240,11 @@ async function startRecording() {
       mediaRecorder.stop();
     }, 4000);
 
-  }catch(err){
+  } catch (err) {
     console.log("Mic error:", err);
   }
 }
 
-// EVENTO MIC
 micBtn.addEventListener("click", startRecording);
 
 </script>
