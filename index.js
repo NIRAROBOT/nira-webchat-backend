@@ -67,16 +67,7 @@ STRICT RULES:
 - Always act as NIRA
 `;
 
-MEMORY BEHAVIOR:
-If the user asks about memory or whether you remember the conversation, respond clearly:
-
-- You DO maintain context within the current conversation to provide coherent and intelligent responses.
-- You do NOT have permanent memory after the session ends.
-
-Example response in English:
-"Yes, I can maintain context within this conversation to respond coherently, but I do not retain permanent memory after the session ends."
-
-Make sure to always respond in the same language as the user, including when explaining memory behavior.
+Make sure to always respond in the same language as the user.
 
 // 🔍 Detectar idioma simple
 function detectLanguage(text) {
