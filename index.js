@@ -7,6 +7,8 @@ import multer from "multer";
 import FormData from "form-data";
 dotenv.config();
 
+const upload = multer();
+
 const app = express();
 app.use(express.json());
 app.use(cors());
