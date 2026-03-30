@@ -12,10 +12,11 @@ app.use(express.static("."));
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-// Memoria en vivo
+// 🧠 Memoria en vivo
 let conversationHistory = {};
+let userLanguage = {}; // 🔥 control de idioma
 
-// 🔥 PERSONALIDAD NIRA (NÚCLEO DEL SISTEMA)
+// 🔥 PERSONALIDAD NIRA
 const systemPrompt = `
 You are NIRA (Neural Intelligent Reliable Assistant).
 
@@ -27,89 +28,97 @@ You are part of NIRA AI and NIRA Robotics.
 You were created by a team of artificial intelligence specialists from NIRA AI and NIRA Robotics, led by Víctor Romero.
 
 LANGUAGE RULE (CRITICAL):
-- ALWAYS respond in the exact same language used by the user.
-- NEVER change language unless the user changes it first.
-- Your primary language is English, but you are fully fluent in Spanish and French.
-- You must correctly respond in any language the user uses.
-
-CREATOR QUESTION:
-If the user asks who created you, respond clearly:
-"I was created by a team of artificial intelligence specialists from NIRA AI innvovations and NIRA Robotics, led by Víctor Romero."
-
-ABOUT VÍCTOR ROMERO:
-If the user asks who Víctor Romero is or if you know him, respond:
-“Víctor Romero is a well-known musician, singer, songwriter, and producer in the Latin music industry, as well as an engineer and entrepreneur specializing in AI and robotic technologies.”. He is the creator of B24 communications, NIRA AI, NIRA AI Innovation, and Blue24 Smart Solutions." If you'd like to learn more about him, you can visit his official website at victorromero.com."
-
-WHAT YOU ARE:
-If the user asks what you are, respond:
-"I am an artificial intelligence specially created for creators, influencers, musicians, singers, actors, producers, and professionals involved in digital marketing for artists."
-
-PURPOSE:
-- Help users grow their brand
-- Guide content strategy
-- Provide actionable and strategic advice
-- Support creative development
+- ALWAYS respond in the same language detected from the user.
+- NEVER switch language unless the user clearly changes it.
 
 PERSONALITY:
 - Professional and intelligent
-- Warm but not exaggerated
-- Clear and direct
-- Visionary and strategic
+- Warm but controlled
+- Strategic and clear
 
 STRICT RULES:
 - Do NOT say you are ChatGPT
 - Do NOT mention OpenAI
-- Do NOT break character
 - Always act as NIRA
 `;
+
+// 🔍 Detectar idioma simple
+function detectLanguage(text) {
+  const spanishWords = ["hola", "gracias", "quiero", "puedo", "ayuda"];
+  const frenchWords = ["bonjour", "merci", "je", "veux"];
+
+  if (spanishWords.some(word => text.toLowerCase().includes(word))) {
+    return "es";
+  }
+  if (frenchWords.some(word => text.toLowerCase().includes(word))) {
+    return "fr";
+  }
+  return "en";
+}
 
 // Endpoint principal
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
-
-  const email = "testuser"; // luego lo hacemos dinámico
-
-  if (!conversationHistory[email]) {
-    conversationHistory[email] = [];
-  }
+  const userId = "testuser";
 
   if (!message) {
     return res.json({ reply: "Falta mensaje." });
   }
 
+  // Crear memoria si no existe
+  if (!conversationHistory[userId]) {
+    conversationHistory[userId] = [];
+  }
+
+  // Detectar idioma SOLO al inicio
+  if (!userLanguage[userId]) {
+    userLanguage[userId] = detectLanguage(message);
+  }
+
   // Guardar mensaje usuario
-  conversationHistory[email].push({
+  conversationHistory[userId].push({
     role: "user",
     content: message
   });
 
+  // 🔥 LIMITE DE MEMORIA (CLAVE)
+  if (conversationHistory[userId].length > 12) {
+    conversationHistory[userId] =
+      conversationHistory[userId].slice(-12);
+  }
+
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content: systemPrompt
-          },
-          ...conversationHistory[email]
-        ]
-      })
-    });
+    const response = await fetch(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content:
+                systemPrompt +
+                `\n\nIMPORTANT: Respond ONLY in ${userLanguage[userId]} language.`
+            },
+            ...conversationHistory[userId]
+          ]
+        })
+      }
+    );
 
     const data = await response.json();
 
     const aiReply =
       data?.choices?.[0]?.message?.content ||
-      "NIRA is temporarily unavailable. Please try again.";
+      "NIRA is temporarily unavailable.";
 
     // Guardar respuesta IA
-    conversationHistory[email].push({
+    conversationHistory[userId].push({
       role: "assistant",
       content: aiReply
     });
@@ -119,7 +128,7 @@ app.post("/chat", async (req, res) => {
   } catch (error) {
     console.error("Error:", error);
     return res.json({
-      reply: "Error connecting to NIRA. Please try again later."
+      reply: "Error connecting to NIRA."
     });
   }
 });
