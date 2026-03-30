@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 
+import multer from "multer";
+import FormData from "form-data";
 dotenv.config();
 
 const app = express();
@@ -168,7 +170,35 @@ app.post("/chat", async (req, res) => {
     });
   }
 });
+app.post("/transcribe", upload.single("audio"), async (req, res) => {
 
+  try {
+
+    const formData = new FormData();
+    formData.append("file", req.file.buffer, "audio.webm");
+    formData.append("model", "whisper-1");
+
+    const response = await fetch(
+      "https://api.openai.com/v1/audio/transcriptions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`
+        },
+        body: formData
+      }
+    );
+
+    const data = await response.json();
+
+    res.json({ text: data.text });
+
+  } catch (error) {
+    console.error("Whisper error:", error);
+    res.json({ text: "" });
+  }
+
+});
 // Servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
