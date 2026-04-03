@@ -134,6 +134,8 @@ app.post("/chat", async (req, res) => {
       conversationHistory[userId].slice(-12);
   }
 
+  const today = new Date().toISOString().split("T")[0];
+  
   try {
     const response = await fetch(
       "https://api.openai.com/v1/chat/completions",
