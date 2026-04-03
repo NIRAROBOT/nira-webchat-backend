@@ -150,10 +150,14 @@ app.post("/chat", async (req, res) => {
           messages: [
             {
               role: "system",
-              content:
-                systemPrompt +
-                `\n\nIMPORTANT: Respond ONLY in ${userLanguage[userId]} language.`
-            },
+       
+content: systemPrompt + `
+
+Today is ${today}.
+Use this as the current date when answering questions.
+
+IMPORTANT: Always respond in the same language as the user.
+`
             ...conversationHistory[userId]
           ]
         })
