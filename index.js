@@ -149,15 +149,9 @@ app.post("/chat", async (req, res) => {
           model: "gpt-4o-mini",
           messages: [
             {
-              role: "system",
-       
-content: systemPrompt + `
+              role: "system",       
 
-Today is ${today}.
-Use this as the current date when answering questions.
-
-IMPORTANT: Always respond in the same language as the user.
-`
+content: systemPrompt + "\n\nToday is " + today + ". Use this as the current date when answering questions.\n\nIMPORTANT: Always respond in the same language as the user."
             ...conversationHistory[userId]
           ]
         })
