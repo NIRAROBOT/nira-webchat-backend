@@ -6,31 +6,44 @@
 <title>NIRA Chat</title>
 
 <style>
-body{
+body {
   background: radial-gradient(circle at top, #0a0f1c, #000000);
   color: white;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden; /* 🔥 IMPORTANTE */
 }
 
-#chat-container{
-  width:95vw;
-  max-width:700px;
-  height:92vh;
+  body::before {
+  content: "";
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: url("https://www.transparenttextures.com/patterns/stardust.png");
+  opacity: 0.15;
+  z-index: 0;
+}
+  
+#chat-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+
+  width: 95vw;
+  max-width: 700px;
+  height: 92vh;
+
   background: rgba(255,255,255,0.03);
-  color: white;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius:12px;
-  display:flex;
-  flex-direction:column;
-  box-shadow:0 0 40px rgba(0,0,0,.2);
-}
+  border-radius: 12px;
 
+  display: flex;
+  flex-direction: column;
+}
 .avatar {
   width: 48px;
   height: 48px;
@@ -126,7 +139,7 @@ button:hover{
 </head>
 
 <body>
-
+<canvas id="particles"></canvas>
 <div id="chat-container">
 
 <div id="header">
@@ -150,7 +163,56 @@ const input = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
 const messages = document.getElementById("messages");
+// ===== PARTICULAS =====
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
 
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particlesArray = [];
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2;
+    this.speedX = Math.random() * 0.3 - 0.15;
+    this.speedY = Math.random() * 0.3 - 0.15;
+  }
+
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+  }
+
+  draw() {
+    ctx.fillStyle = "rgba(0,150,255,0.5)";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function initParticles() {
+  for (let i = 0; i < 80; i++) {
+    particlesArray.push(new Particle());
+  }
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = 0; i < particlesArray.length; i++) {
+    particlesArray[i].update();
+    particlesArray[i].draw();
+  }
+
+  requestAnimationFrame(animateParticles);
+}
+
+initParticles();
+animateParticles();
 // 🔥 ENVIAR MENSAJE
 sendBtn.addEventListener("click", send);
 
@@ -172,7 +234,7 @@ async function send(){
   try{
 
     let res = await fetch(
-      "https://nira-webchat-backend.onrender.com/chat",
+      "https://chat.nirarobot.com/chat",
       {
         method:"POST",
         headers:{
