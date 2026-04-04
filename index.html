@@ -234,18 +234,17 @@ async function send(){
   try{
 
     let res = await fetch(
-      "https://chat.nirarobot.com/chat",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
+    "https://nira-webchat-backend.onrender.com/chat",
+    {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          email:"demo@nira.com",
-          message:text
+            message: text
         })
-      }
-    );
+    }
+);
 
     let data = await res.json();
 
