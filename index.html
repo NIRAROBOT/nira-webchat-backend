@@ -47,28 +47,28 @@
       pointer-events: none;
     }
 
+    /* ===== CHAT CONTAINER (CAMBIO IMPORTANTE) ===== */
     #chat-container {
-      width: min(95vw, 700px);
-      height: 92vh;
-      max-height: 900px;
-      background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
+      width: min(94vw, 680px);
+      height: 80vh;
+      max-height: 860px;
+      background: #F5F5F7;
+      border-radius: 20px;
       display: flex;
       flex-direction: column;
       position: relative;
       z-index: 1;
-      box-shadow: 0 0 40px rgba(0,0,0,0.25);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.45);
       overflow: hidden;
     }
 
+    /* ===== HEADER ===== */
     #header {
       display: flex;
       align-items: center;
       gap: 14px;
       padding: 18px 20px;
-      background: rgba(0, 0, 0, 0.28);
+      background: linear-gradient(135deg, #0a0f1c, #000000);
       border-bottom: 1px solid rgba(0, 150, 255, 0.20);
       flex-shrink: 0;
     }
@@ -78,7 +78,7 @@
       height: 54px;
       border-radius: 50%;
       object-fit: cover;
-      box-shadow: 0 0 22px rgba(0, 150, 255, 0.75);
+      box-shadow: 0 0 18px rgba(0, 150, 255, 0.7);
       flex-shrink: 0;
     }
 
@@ -89,6 +89,7 @@
       color: #f5f9ff;
     }
 
+    /* ===== MESSAGES ===== */
     #messages {
       flex: 1;
       overflow-y: auto;
@@ -97,14 +98,15 @@
       flex-direction: column;
       gap: 12px;
       min-height: 0;
+      color: #1a1a1a;
     }
 
     #messages::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
     }
 
     #messages::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.2);
       border-radius: 999px;
     }
 
@@ -122,30 +124,31 @@
 
     .bot {
       align-self: flex-start;
-      max-width: 88%;
-      background: rgba(255,255,255,0.05);
-      color: #eaf3ff;
+      max-width: 85%;
+      background: #ffffff;
+      color: #1a1a1a;
       padding: 12px 16px;
       border-radius: 16px 16px 16px 4px;
       white-space: pre-wrap;
       word-break: break-word;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid #e5e7eb;
     }
 
     .system {
       align-self: center;
       font-size: 13px;
-      color: rgba(255,255,255,0.65);
+      color: rgba(0,0,0,0.45);
       padding: 6px 10px;
     }
 
+    /* ===== INPUT ===== */
     #input-area {
       display: flex;
       gap: 10px;
       align-items: center;
       padding: 16px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      background: rgba(0,0,0,0.20);
+      border-top: 1px solid #e5e7eb;
+      background: #ffffff;
       flex-shrink: 0;
     }
 
@@ -154,16 +157,16 @@
       min-width: 0;
       min-height: 48px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.06);
-      color: white;
+      border: 1px solid #d1d5db;
+      background: #f0f2f5;
+      color: #1a1a1a;
       padding: 14px 16px;
       outline: none;
       font-size: 16px;
     }
 
     #msg::placeholder {
-      color: rgba(255,255,255,0.55);
+      color: #6b7280;
     }
 
     button {
@@ -197,11 +200,12 @@
       box-shadow: 0 0 18px rgba(255, 59, 48, 0.55);
     }
 
+    /* ===== MOBILE ===== */
     @media (max-width: 640px) {
       #chat-container {
-        width: 96vw;
-        height: 90vh;
-        border-radius: 16px;
+        width: 94vw;
+        height: 78vh;
+        border-radius: 18px;
       }
 
       .title {
@@ -209,21 +213,8 @@
       }
 
       .avatar {
-        width: 50px;
-        height: 50px;
-      }
-
-      #input-area {
-        padding: 12px;
-        gap: 8px;
-      }
-
-      #msg {
-        font-size: 16px;
-      }
-
-      #sendBtn {
-        padding-inline: 14px;
+        width: 48px;
+        height: 48px;
       }
     }
   </style>
@@ -262,7 +253,6 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
-    // ===== PARTICLES =====
     const canvas = document.getElementById("particles");
     const ctx = canvas.getContext("2d");
 
@@ -300,7 +290,7 @@
       }
 
       draw() {
-        ctx.fillStyle = "rgba(60, 160, 255, 0.8)";
+        ctx.fillStyle = "rgba(60, 160, 255, 0.6)";
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -309,7 +299,7 @@
 
     function initParticles() {
       particlesArray = [];
-      for (let i = 0; i < 90; i++) {
+      for (let i = 0; i < 70; i++) {
         particlesArray.push(new Particle());
       }
     }
@@ -328,7 +318,6 @@
     initParticles();
     animateParticles();
 
-    // ===== SEND MESSAGE =====
     sendBtn.addEventListener("click", send);
     input.addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
@@ -346,87 +335,60 @@
       try {
         const res = await fetch("/chat", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            message: text
-          })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
         });
-
-        if (!res.ok) {
-          throw new Error("HTTP " + res.status);
-        }
 
         const data = await res.json();
         addMessage("bot", data.reply || "No response received.");
       } catch (error) {
-        console.error("Chat error:", error);
         addMessage("bot", "Server not responding");
       }
     }
 
-    // ===== MIC WITH WHISPER =====
     let mediaRecorder;
     let audioChunks = [];
 
     async function startRecording() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = [];
-        micBtn.textContent = "🎙️";
-        micBtn.classList.add("mic-recording");
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+      micBtn.textContent = "🎙️";
+      micBtn.classList.add("mic-recording");
 
-        mediaRecorder.ondataavailable = event => {
-          audioChunks.push(event.data);
-        };
+      mediaRecorder.ondataavailable = event => {
+        audioChunks.push(event.data);
+      };
 
-        mediaRecorder.onstop = async () => {
-          micBtn.textContent = "🎤";
-          micBtn.classList.remove("mic-recording");
+      mediaRecorder.onstop = async () => {
+        micBtn.textContent = "🎤";
+        micBtn.classList.remove("mic-recording");
 
-          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-          const formData = new FormData();
-          formData.append("audio", audioBlob, "recording.webm");
+        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const formData = new FormData();
+        formData.append("audio", audioBlob);
 
-          try {
-            const res = await fetch("/transcribe", {
-              method: "POST",
-              body: formData
-            });
+        const res = await fetch("/transcribe", {
+          method: "POST",
+          body: formData
+        });
 
-            if (!res.ok) {
-              throw new Error("HTTP " + res.status);
-            }
+        const data = await res.json();
+        input.value = data.text || "";
 
-            const data = await res.json();
-            input.value = data.text || "";
+        if (input.value.trim()) send();
 
-            if (input.value.trim()) {
-              send();
-            }
-          } catch (err) {
-            console.error("Transcription error:", err);
-            addMessage("bot", "Transcription error");
-          }
+        stream.getTracks().forEach(track => track.stop());
+      };
 
-          stream.getTracks().forEach(track => track.stop());
-        };
+      mediaRecorder.start();
 
-        mediaRecorder.start();
-
-        setTimeout(() => {
-          if (mediaRecorder && mediaRecorder.state !== "inactive") {
-            mediaRecorder.stop();
-          }
-        }, 4000);
-
-      } catch (err) {
-        console.error("Mic error:", err);
-        addMessage("bot", "Mic error");
-      }
+      setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
+        }
+      }, 4000);
     }
 
     micBtn.addEventListener("click", startRecording);
