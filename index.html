@@ -27,21 +27,25 @@ body{
   z-index: 0;
 }
   
-#chat-container{
-  width:95vw;
-  max-width:700px;
-  height:92vh;
+#chat-container {
+  position: relative;
+  z-index: 1;
+
+  width: 95vw;
+  max-width: 700px;
+  height: 92vh;
+
+  margin: auto; /* 🔥 CLAVE */
+
   background: rgba(255,255,255,0.03);
   color: white;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius:12px;
-  display:flex;
-  flex-direction:column;
-  box-shadow:0 0 40px rgba(0,0,0,.2);
-    
-  position: relative;
-  z-index: 1;
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 40px rgba(0,0,0,0.2);
 }
 
 .avatar {
