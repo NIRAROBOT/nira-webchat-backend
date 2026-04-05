@@ -47,18 +47,12 @@
       pointer-events: none;
     }
 
-    /* ===== CONTENEDOR (MISMO TAMAÑO, SOLO MEJORADO) ===== */
     #chat-container {
       width: min(94vw, 680px);
       height: 80vh;
       max-height: 860px;
 
-      background: linear-gradient(
-        180deg,
-        #FAFBFC 0%,
-        #F1F3F6 100%
-      );
-
+      background: linear-gradient(180deg, #FAFBFC 0%, #F1F3F6 100%);
       border-radius: 20px;
 
       display: flex;
@@ -67,7 +61,6 @@
       position: relative;
       z-index: 1;
 
-      /* 👇 CAMBIO SUTIL (FLOTANTE PERO ELEGANTE) */
       box-shadow: 
         0 20px 50px rgba(0,0,0,0.45),
         0 8px 20px rgba(0,0,0,0.25),
@@ -79,8 +72,8 @@
     /* ===== HEADER ===== */
     #header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 14px;
       padding: 18px 20px;
 
       background: linear-gradient(
@@ -91,24 +84,34 @@
       );
 
       border-bottom: 1px solid rgba(0, 150, 255, 0.12);
+    }
 
-      flex-shrink: 0;
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
     .avatar {
-      width: 54px;
-      height: 54px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       object-fit: cover;
-      box-shadow: 0 0 18px rgba(0, 150, 255, 0.8);
-      flex-shrink: 0;
+      box-shadow: 0 0 14px rgba(0, 150, 255, 0.55);
     }
 
     .title {
       font-size: 20px;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
       color: #f5f9ff;
+    }
+
+    .logo {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      opacity: 0.9;
     }
 
     /* ===== MESSAGES ===== */
@@ -123,15 +126,6 @@
       color: #1a1a1a;
     }
 
-    #messages::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    #messages::-webkit-scrollbar-thumb {
-      background: rgba(0,0,0,0.2);
-      border-radius: 999px;
-    }
-
     .user {
       align-self: flex-end;
       max-width: 80%;
@@ -139,7 +133,6 @@
       color: white;
       padding: 12px 16px;
       border-radius: 16px 16px 4px 16px;
-      box-shadow: 0 4px 14px rgba(0, 150, 255, 0.28);
     }
 
     .bot {
@@ -171,20 +164,11 @@
 
     #msg {
       flex: 1;
-      min-width: 0;
       min-height: 48px;
       border-radius: 16px;
       border: 1px solid #e5e7eb;
-      background: #ffffff;
-      color: #1a1a1a;
       padding: 14px 16px;
       font-size: 16px;
-      outline: none;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    #msg::placeholder {
-      color: #6b7280;
     }
 
     button {
@@ -196,208 +180,38 @@
       font-weight: 700;
       cursor: pointer;
       background: linear-gradient(135deg, #005eff, #00c3ff);
-      box-shadow: 0 4px 14px rgba(0, 150, 255, 0.35);
-    }
-
-    .mic-button {
-      min-width: 48px;
-      padding: 12px;
-    }
-
-    .mic-recording {
-      background: linear-gradient(135deg, #ff3b30, #ff6a5c);
-      box-shadow: 0 0 18px rgba(255, 59, 48, 0.55);
-    }
-
-    /* ===== MOBILE (ARREGLADO SIN CAMBIAR TAMAÑO GENERAL) ===== */
-    @media (max-width: 640px) {
-      #chat-container {
-        width: 94vw;
-        height: 80vh;
-        border-radius: 18px;
-      }
-
-      #input-area {
-        gap: 6px;
-        padding: 12px;
-      }
-
-      button {
-        padding: 10px 12px;
-      }
-
-      .mic-button {
-        min-width: 44px;
-      }
     }
   </style>
 </head>
+
 <body>
   <canvas id="particles"></canvas>
 
   <div id="chat-container">
+
+    <!-- HEADER NUEVO -->
     <div id="header">
-      <img src="nira-avatar.png" class="avatar" />
-      <div class="title">NIRA AI</div>
+      <div class="header-left">
+        <img src="nira-avatar.png" class="avatar" />
+        <div class="title">NIRA AI</div>
+      </div>
+
+      <img src="nira-logo.png" class="logo" />
     </div>
 
     <div id="messages">
-      <div class="system">Welcome to NIRA</div>
+      <div class="system">
+        Hi, I’m NIRA.  
+        Your intelligent assistant for artists, creators and entrepreneurs.
+      </div>
     </div>
 
     <div id="input-area">
-      <input id="msg" placeholder="Ask NIRA something..." />
-      <button id="micBtn" class="mic-button">🎤</button>
-      <button id="sendBtn">Send</button>
+      <input id="msg" placeholder="Ask NIRA anything..." />
+      <button>🎤</button>
+      <button>Send</button>
     </div>
+
   </div>
-
-  <script>
-    const input = document.getElementById("msg");
-    const sendBtn = document.getElementById("sendBtn");
-    const micBtn = document.getElementById("micBtn");
-    const messages = document.getElementById("messages");
-
-    function addMessage(role, text) {
-      const div = document.createElement("div");
-      div.className = role;
-      div.textContent = text;
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    let particlesArray = [];
-
-    class Particle {
-      constructor() {
-        this.reset();
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = Math.random() * 0.4 - 0.2;
-        this.speedY = Math.random() * 0.4 - 0.2;
-      }
-
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-      }
-
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-
-        if (this.x < -10) this.x = canvas.width + 10;
-        if (this.x > canvas.width + 10) this.x = -10;
-        if (this.y < -10) this.y = canvas.height + 10;
-        if (this.y > canvas.height + 10) this.y = -10;
-      }
-
-      draw() {
-        ctx.fillStyle = "rgba(60,160,255,0.5)";
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    function initParticles() {
-      particlesArray = [];
-      for (let i = 0; i < 60; i++) {
-        particlesArray.push(new Particle());
-      }
-    }
-
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particlesArray.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      requestAnimationFrame(animateParticles);
-    }
-
-    initParticles();
-    animateParticles();
-
-    sendBtn.addEventListener("click", send);
-    input.addEventListener("keydown", e => {
-      if (e.key === "Enter") send();
-    });
-
-    async function send() {
-      const text = input.value.trim();
-      if (!text) return;
-
-      addMessage("user", text);
-      input.value = "";
-
-      try {
-        const res = await fetch("/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text })
-        });
-
-        const data = await res.json();
-        addMessage("bot", data.reply || "No response received.");
-      } catch {
-        addMessage("bot", "Server not responding");
-      }
-    }
-
-    let mediaRecorder;
-    let audioChunks = [];
-
-    async function startRecording() {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      mediaRecorder = new MediaRecorder(stream);
-      audioChunks = [];
-
-      micBtn.textContent = "🎙️";
-      micBtn.classList.add("mic-recording");
-
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-
-      mediaRecorder.onstop = async () => {
-        micBtn.textContent = "🎤";
-        micBtn.classList.remove("mic-recording");
-
-        const blob = new Blob(audioChunks, { type: "audio/webm" });
-        const formData = new FormData();
-        formData.append("audio", blob);
-
-        const res = await fetch("/transcribe", {
-          method: "POST",
-          body: formData
-        });
-
-        const data = await res.json();
-        input.value = data.text || "";
-
-        if (input.value.trim()) send();
-
-        stream.getTracks().forEach(t => t.stop());
-      };
-
-      mediaRecorder.start();
-
-      setTimeout(() => {
-        if (mediaRecorder.state !== "inactive") mediaRecorder.stop();
-      }, 10000);
-    }
-
-    micBtn.addEventListener("click", startRecording);
-  </script>
 </body>
 </html>
