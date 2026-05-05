@@ -277,7 +277,7 @@ const messages = document.getElementById("messages");
 function addMessage(role, text) {
   const div = document.createElement("div");
   div.className = role;
-  div.textContent = text;
+  div.innerHTML = text.replace(/\n/g, "<br>");
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
