@@ -439,9 +439,7 @@ async function startRecording() {
 
   mediaRecorder.start();
 
-  setTimeout(() => {
-    if (mediaRecorder.state !== "inactive") mediaRecorder.stop();
-  }, 8000);
+
 }
 
 micBtn.addEventListener("click", startRecording);
