@@ -278,7 +278,12 @@ function addMessage(role, text) {
   const div = document.createElement("div");
   div.className = role;
   div.innerHTML = text
-  .replace(/\s+(?=\d\))/g, "<br><br>")
+  .replace(/\s+(?=1\))/g, "<br><br>")
+  .replace(/\s+(?=2\))/g, "<br><br>")
+  .replace(/\s+(?=3\))/g, "<br><br>")
+  .replace(/1\)/g, "1) 🚀")
+  .replace(/2\)/g, "2) 💡")
+  .replace(/3\)/g, "3) 🎯")
   .replace(/\n\n/g, "<br><br>")
   .replace(/\n/g, "<br>")
   .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
