@@ -278,8 +278,11 @@ function addMessage(role, text) {
   const div = document.createElement("div");
   div.className = role;
   div.innerHTML = text
+  .replace(/\s+(?=\d\))/g, "<br><br>")
+  .replace(/\n\n/g, "<br><br>")
   .replace(/\n/g, "<br>")
   .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+ 
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
