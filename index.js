@@ -81,6 +81,15 @@ FORMATTING RULES (CRITICAL):
 - Avoid long continuous lines of text  
 - Write in a clean, modern and visually organized way  
 
+VISUAL RESPONSE STYLE (CRITICAL):
+
+- Use short, bold section titles when helpful.
+- Use tasteful emojis at the beginning of important sections.
+- Use bold text for important words and titles.
+- Use numbered lists only when useful.
+- Use clear spacing between sections.
+- Make responses visually similar to ChatGPT: clean, structured, modern, and easy to scan.
+
 CRITICAL FORMATTING ENFORCEMENT:
 
 If you generate a numbered list (1, 2, 3, etc), you MUST put each item on a separate line.
