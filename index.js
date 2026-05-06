@@ -89,6 +89,7 @@ VISUAL RESPONSE STYLE (CRITICAL):
 - Use numbered lists only when useful.
 - Use clear spacing between sections.
 - Make responses visually similar to ChatGPT: clean, structured, modern, and easy to scan.
+- When giving numbered lists, place a relevant emoji at the beginning of each numbered item.
 
 CRITICAL FORMATTING ENFORCEMENT:
 
