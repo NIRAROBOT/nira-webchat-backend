@@ -145,6 +145,40 @@ body::before {
   border-radius: 999px;
 }
 
+ .typing {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 2px;
+}
+
+.typing span {
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0.7);
+    opacity: 0.5;
+  }
+
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+ 
 .user {
   align-self: flex-end;
   max-width: 80%;
@@ -429,7 +463,13 @@ async function send() {
  
 const thinkingDiv = document.createElement("div");
     thinkingDiv.className = "bot";
-    thinkingDiv.innerHTML = "✦ NIRA is thinking...";
+    thinkingDiv.innerHTML = `
+<div class="typing">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+`;
     messages.appendChild(thinkingDiv);
     messages.scrollTop = messages.scrollHeight;
   try {
