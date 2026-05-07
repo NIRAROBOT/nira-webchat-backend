@@ -477,7 +477,19 @@ if (mediaRecorder.state === "recording") {
 
 }
 
-micBtn.addEventListener("click", startRecording);
+micBtn.addEventListener("click", () => {
+
+if (mediaRecorder && mediaRecorder.state === "recording") {
+
+mediaRecorder.stop();
+
+} else {
+
+startRecording();
+
+}
+
+});
 </script>
 
 </body>
