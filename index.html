@@ -276,7 +276,7 @@ button {
 
   <div id="input-area">
     <input id="msg" placeholder="Ask NIRA something..." />
-    <button id="micBtn" class="mic-button">🎤</button>
+    <button id="micBtn" class="mic-button">🎙️</button>
     <button id="sendBtn">Send</button>
   </div>
 
@@ -431,7 +431,8 @@ async function startRecording() {
   mediaRecorder = new MediaRecorder(stream);
   audioChunks = [];
 
-  micBtn.textContent = "🎙️";
+  micBtn.textContent = "⏹️";
+  micBtn.style.background = "#ff3b30";
   micBtn.classList.add("mic-recording");
 
   mediaRecorder.ondataavailable = e => {
@@ -440,7 +441,8 @@ async function startRecording() {
 
   mediaRecorder.onstop = async () => {
 
-    micBtn.textContent = "🎤";
+micBtn.textContent = "🎙️";
+micBtn.style.background = "#2563eb";
     micBtn.classList.remove("mic-recording");
 
     const blob = new Blob(audioChunks, { type: "audio/webm" });
