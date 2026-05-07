@@ -145,13 +145,6 @@ body::before {
   border-radius: 999px;
 }
 
- white-space: pre-wrap;
-overflow-wrap: break-word;
-word-break: normal;
-}
-
-.user {
- 
 .user {
   align-self: flex-end;
   max-width: 80%;
@@ -170,7 +163,7 @@ word-break: normal;
     opacity: 1;
     transform: translateY(0);
   }
- 
+}
 .bot {
   align-self: flex-start;
   max-width: 88%;
@@ -436,13 +429,7 @@ async function send() {
  
 const thinkingDiv = document.createElement("div");
     thinkingDiv.className = "bot";
-    thinkingDiv.innerHTML = `
-<div class="typing">
-  <span></span>
-  <span></span>
-  <span></span>
-</div>
-`;
+    thinkingDiv.innerHTML = "✦ NIRA is thinking...";
     messages.appendChild(thinkingDiv);
     messages.scrollTop = messages.scrollHeight;
   try {
