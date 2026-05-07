@@ -467,40 +467,14 @@ async function startRecording() {
   };
 
   mediaRecorder.start();
+micBtn.onclick = () => {
 
-  function detectSilence() {
+if (mediaRecorder.state === "recording") {
+    mediaRecorder.stop();
+}
 
-    analyser.getByteFrequencyData(dataArray);
+};
 
-    const volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
-
-    if (volume < 5) {
-
-      if (!silenceTimer) {
-
-        silenceTimer = setTimeout(() => {
-
-          if (mediaRecorder.state === "recording") {
-            mediaRecorder.stop();
-          }
-
-        }, 1800);
-
-      }
-
-    } else {
-
-      clearTimeout(silenceTimer);
-      silenceTimer = null;
-
-    }
-
-    if (mediaRecorder.state === "recording") {
-      requestAnimationFrame(detectSilence);
-    }
-  }
-
-  detectSilence();
 }
 
 micBtn.addEventListener("click", startRecording);
