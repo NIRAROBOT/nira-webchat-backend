@@ -154,7 +154,16 @@ body::before {
   border-radius: 16px 16px 4px 16px;
   box-shadow: 0 4px 14px rgba(0, 150, 255, 0.28);
 }
-
+@keyframes messageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .bot {
   align-self: flex-start;
   max-width: 88%;
@@ -162,6 +171,7 @@ body::before {
 background: #ffffff;
 color: #111827;
 
+ animation: messageFadeIn 0.28s ease-out;
 
   padding: 20px 22px;
 
