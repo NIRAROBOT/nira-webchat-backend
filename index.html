@@ -399,18 +399,20 @@ async function send() {
 
   addMessage("user", text);
   input.value = "";
-
+ 
+const thinkingDiv = document.createElement("div");
+    thinkingDiv.className = "bot";
+    thinkingDiv.innerHTML = "✦ NIRA is thinking...";
+    messages.appendChild(thinkingDiv);
+    messages.scrollTop = messages.scrollHeight;
   try {
+   
     const res = await fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: text })
     });
-    const thinkingDiv = document.createElement("div");
-    thinkingDiv.className = "bot";
-    thinkingDiv.innerHTML = "✦ NIRA is thinking...";
-    messages.appendChild(thinkingDiv);
-    messages.scrollTop = messages.scrollHeight;
+    
     const data = await res.json();
     thinkingDiv.remove();
     addMessage("bot", data.reply || "No response received.");
