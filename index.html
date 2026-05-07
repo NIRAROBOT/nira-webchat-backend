@@ -410,11 +410,23 @@ async function send() {
   }
 }
 
-let mediaRecorder;
+ let mediaRecorder;
 let audioChunks = [];
+let silenceTimer;
 
 async function startRecording() {
+
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+  const audioContext = new AudioContext();
+  const source = audioContext.createMediaStreamSource(stream);
+  const analyser = audioContext.createAnalyser();
+
+  source.connect(analyser);
+
+  analyser.fftSize = 512;
+
+  const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
   mediaRecorder = new MediaRecorder(stream);
   audioChunks = [];
@@ -422,13 +434,17 @@ async function startRecording() {
   micBtn.textContent = "🎙️";
   micBtn.classList.add("mic-recording");
 
-  mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+  mediaRecorder.ondataavailable = e => {
+    audioChunks.push(e.data);
+  };
 
   mediaRecorder.onstop = async () => {
+
     micBtn.textContent = "🎤";
     micBtn.classList.remove("mic-recording");
 
     const blob = new Blob(audioChunks, { type: "audio/webm" });
+
     const formData = new FormData();
     formData.append("audio", blob);
 
@@ -438,16 +454,53 @@ async function startRecording() {
     });
 
     const data = await res.json();
+
     input.value = data.text || "";
 
-    if (input.value.trim()) send();
+    if (input.value.trim()) {
+      send();
+    }
 
     stream.getTracks().forEach(t => t.stop());
+
+    audioContext.close();
   };
 
   mediaRecorder.start();
 
+  function detectSilence() {
 
+    analyser.getByteFrequencyData(dataArray);
+
+    const volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
+
+    if (volume < 5) {
+
+      if (!silenceTimer) {
+
+        silenceTimer = setTimeout(() => {
+
+          if (mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+          }
+
+        }, 1800);
+
+      }
+
+    } else {
+
+      clearTimeout(silenceTimer);
+      silenceTimer = null;
+
+    }
+
+    if (mediaRecorder.state === "recording") {
+      requestAnimationFrame(detectSilence);
+    }
+  }
+
+  detectSilence();
 }
 
 micBtn.addEventListener("click", startRecording);
