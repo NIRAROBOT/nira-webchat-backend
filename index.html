@@ -558,6 +558,7 @@ async function startRecording() {
 micBtn.textContent = "🎙️";
 micBtn.style.background = "#2563eb";
 micBtn.classList.remove("mic-recording");
+hideVoiceWave();
   
 
     const blob = new Blob(audioChunks, { type: "audio/webm" });
