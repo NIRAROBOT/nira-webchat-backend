@@ -309,7 +309,7 @@ button {
     <input id="msg" placeholder="Ask NIRA something..." />
    
 <button id="micBtn" class="mic-button">🎤</button>
-<button id="cancelMicBtn" style="display:none;">✕</button>
+
 <button id="sendBtn">➜</button>
   </div>
 
@@ -319,7 +319,6 @@ button {
 const input = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
-const cancelMicBtn = document.getElementById("cancelMicBtn");
 const messages = document.getElementById("messages");
 
 
@@ -475,7 +474,7 @@ async function startRecording() {
   micBtn.textContent = "✓";
   micBtn.style.background = "#1d9bf0";
   micBtn.classList.add("mic-recording");
-  cancelMicBtn.style.display = "inline-block";
+
 
   mediaRecorder.ondataavailable = e => {
     audioChunks.push(e.data);
@@ -486,7 +485,7 @@ async function startRecording() {
 micBtn.textContent = "🎙️";
 micBtn.style.background = "#2563eb";
     micBtn.classList.remove("mic-recording");
-    cancelMicBtn.style.display = "none";
+  
 
     const blob = new Blob(audioChunks, { type: "audio/webm" });
 
@@ -497,20 +496,7 @@ micBtn.style.background = "#2563eb";
       method: "POST",
       body: formData
     });
-    cancelMicBtn.onclick = () => {
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-
-        audioChunks = [];
-
-        micBtn.textContent = "🎤";
-        micBtn.style.background = "#2563eb";
-
-        micBtn.classList.remove("mic-recording");
-
-        cancelMicBtn.style.display = "none";
-    }
-};
+  
     const data = await res.json();
 
     input.value = data.text || "";
