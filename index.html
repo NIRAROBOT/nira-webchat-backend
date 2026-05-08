@@ -303,7 +303,16 @@ button {
   background: linear-gradient(135deg, #ff3b30, #ff6a5c);
   box-shadow: 0 0 18px rgba(255, 59, 48, 0.55);
 }
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
 
+.input-row #msg {
+  flex: 1;
+}
 @media (max-width: 640px) {
   #chat-container {
     width: 94vw;
