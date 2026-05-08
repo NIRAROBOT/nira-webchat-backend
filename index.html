@@ -214,16 +214,29 @@ word-break: normal;
   flex: 1;
   min-width: 0;
   min-height: 48px;
+  max-height: 180px;
+
+  resize: none;
+  overflow-y: auto;
+
   border-radius: 20px;
   border: 1px solid #e5e7eb;
+
   background: rgba(255,255,255,0.92);
   color: #1a1a1a;
+
   padding: 16px 18px;
+
   font-size: 17px;
+  font-family: inherit;
+  line-height: 1.5;
+
   outline: none;
+
   box-shadow:
     0 8px 24px rgba(0,0,0,0.08),
     inset 0 1px 2px rgba(255,255,255,0.5);
+
   transition: all 0.25s ease;
 }
 
@@ -365,7 +378,7 @@ button {
   </div>
 
    <div class="input-row">
-  <input id="msg" placeholder="Ask NIRA something..." />
+  <textarea id="msg" placeholder="Ask NIRA something..."></textarea>
   <button id="micBtn" class="mic-button">🎤</button>
   <button id="sendBtn">➜</button>
   </div>
@@ -379,7 +392,12 @@ const input = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
 const messages = document.getElementById("messages");
+function autoResizeTextarea() {
+  input.style.height = "48px";
+  input.style.height = input.scrollHeight + "px";
+}
 
+input.addEventListener("input", autoResizeTextarea);
 
  function addMessage(role, text) {
 
@@ -574,7 +592,7 @@ hideVoiceWave();
     const data = await res.json();
 
     input.value = data.text || "";
-
+    autoResizeTextarea();
    
 
     stream.getTracks().forEach(t => t.stop());
