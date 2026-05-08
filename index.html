@@ -234,6 +234,56 @@ box-shadow:
 transition: all 0.25s ease;
 }
 
+.voice-wave {
+  display: none;
+  align-items: center;
+  gap: 4px;
+
+  position: absolute;
+  right: 110px;
+  bottom: 18px;
+
+  height: 20px;
+}
+
+.voice-wave span {
+  width: 3px;
+  height: 8px;
+
+  background: #60a5fa;
+
+  border-radius: 999px;
+
+  animation: waveBounce 1s infinite ease-in-out;
+}
+
+.voice-wave span:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.voice-wave span:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.voice-wave span:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.voice-wave span:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+@keyframes waveBounce {
+  0%, 100% {
+    transform: scaleY(0.6);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scaleY(1.8);
+    opacity: 1;
+  }
+} 
  
 }
 
@@ -307,7 +357,13 @@ button {
 
   <div id="input-area">
     <input id="msg" placeholder="Ask NIRA something..." />
-   
+   <div id="voiceWave" class="voice-wave">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
 <button id="micBtn" class="mic-button">🎤</button>
 
 <button id="sendBtn">➜</button>
@@ -474,8 +530,9 @@ async function startRecording() {
   micBtn.textContent = "✓";
   micBtn.style.background = "#1d9bf0";
   micBtn.classList.add("mic-recording");
+  document.getElementById("voiceWave").style.display = "flex";
 
-
+ 
   mediaRecorder.ondataavailable = e => {
     audioChunks.push(e.data);
   };
@@ -485,7 +542,7 @@ async function startRecording() {
 micBtn.textContent = "🎙️";
 micBtn.style.background = "#2563eb";
     micBtn.classList.remove("mic-recording");
-  
+    document.getElementById("voiceWave").style.display = "none";
 
     const blob = new Blob(audioChunks, { type: "audio/webm" });
 
