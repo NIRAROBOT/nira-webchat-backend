@@ -201,6 +201,7 @@ word-break: normal;
 
 /* ===== INPUT ===== */
 #input-area {
+  position: relative;
   display: flex;
   gap: 8px;
   align-items: center;
@@ -217,7 +218,7 @@ word-break: normal;
   border: 1px solid #e5e7eb;
   background: rgba(255,255,255,0.92);
   color: #1a1a1a;
-  padding: 16px 18px;
+  padding: 16px 120px 16px 18px;
   font-size: 17px;
   outline: none;
   box-shadow:
@@ -238,11 +239,10 @@ transition: all 0.25s ease;
   display: none;
   align-items: center;
   gap: 4px;
-
   position: absolute;
-  right: 110px;
-  bottom: 18px;
-
+  right: 105px;
+  top: 50%;
+  transform: translateY(-50%);
   height: 20px;
 }
 
@@ -318,10 +318,11 @@ button {
     border-radius: 18px;
   }
 
-  #input-area {
-    gap: 6px;
-    padding: 12px;
-  }
+#input-area {
+  position: relative;
+  gap: 6px;
+  padding: 12px;
+}
 
   button {
     padding: 10px 12px;
