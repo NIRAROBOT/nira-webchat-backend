@@ -513,6 +513,20 @@ const thinkingDiv = document.createElement("div");
 let audioChunks = [];
 let silenceTimer;
 
+ function showVoiceWave() {
+  const voiceWave = document.getElementById("voiceWave");
+  if (voiceWave) {
+    voiceWave.classList.remove("hidden");
+  }
+}
+
+function hideVoiceWave() {
+  const voiceWave = document.getElementById("voiceWave");
+  if (voiceWave) {
+    voiceWave.classList.add("hidden");
+  }
+}
+ 
 async function startRecording() {
 
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -533,7 +547,7 @@ async function startRecording() {
   micBtn.textContent = "✓";
   micBtn.style.background = "#1d9bf0";
   micBtn.classList.add("mic-recording");
-
+  showVoiceWave();
 
   mediaRecorder.ondataavailable = e => {
     audioChunks.push(e.data);
@@ -543,7 +557,7 @@ async function startRecording() {
 
 micBtn.textContent = "🎙️";
 micBtn.style.background = "#2563eb";
-    micBtn.classList.remove("mic-recording");
+micBtn.classList.remove("mic-recording");
   
 
     const blob = new Blob(audioChunks, { type: "audio/webm" });
