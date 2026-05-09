@@ -467,26 +467,12 @@ class Particle {
     if (this.y > canvas.height + 10) this.y = -10;
   }
 
-draw() {
-  ctx.save();
-
-  ctx.fillStyle = "rgba(120,190,255,0.75)";
-  ctx.shadowBlur = 10;
-  ctx.shadowColor = "rgba(120,190,255,0.75)";
-
-  ctx.beginPath();
-  ctx.moveTo(this.x, this.y - this.size);
-  ctx.lineTo(this.x + this.size * 0.35, this.y - this.size * 0.35);
-  ctx.lineTo(this.x + this.size, this.y);
-  ctx.lineTo(this.x + this.size * 0.35, this.y + this.size * 0.35);
-  ctx.lineTo(this.x, this.y + this.size);
-  ctx.lineTo(this.x - this.size * 0.35, this.y + this.size * 0.35);
-  ctx.lineTo(this.x - this.size, this.y);
-  ctx.lineTo(this.x - this.size * 0.35, this.y - this.size * 0.35);
-  ctx.closePath();
-
-  ctx.fill();
-  ctx.restore();
+  draw() {
+    ctx.fillStyle = "rgba(60,160,255,0.5)";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 
 function initParticles() {
