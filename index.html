@@ -477,7 +477,8 @@ draw() {
 
   ctx.beginPath();
   ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(180, 220, 255, 0.75)";
+  const blue = 200 + Math.random() * 55;
+  ctx.fillStyle = `rgba(180, 220, ${blue}, 0.75)`;
   ctx.fill();
 
   ctx.restore();
