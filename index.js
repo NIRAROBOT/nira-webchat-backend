@@ -1,3 +1,26 @@
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import fetch from "node-fetch";
+
+import multer from "multer";
+import FormData from "form-data";
+
+dotenv.config();
+
+const upload = multer();
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+app.use(express.static("."));
+
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+// 🧠 Memoria en vivo
+let conversationHistory = {};
+let userLanguage = {};
+
 // NIRA PERSONALITY CORE - CLEAN PREMIUM VERSION v1
 
 const systemPrompt = `
