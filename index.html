@@ -468,41 +468,24 @@ class Particle {
   }
 
 draw() {
-
   ctx.save();
 
-  ctx.translate(this.x, this.y);
-
-  const spikes = 4;
-  const outerRadius = this.size;
-  const innerRadius = this.size * 0.45;
+  ctx.fillStyle = "rgba(120,190,255,0.75)";
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = "rgba(120,190,255,0.75)";
 
   ctx.beginPath();
-
-  for (let i = 0; i < spikes * 2; i++) {
-
-    const radius = i % 2 === 0 ? outerRadius : innerRadius;
-
-    const angle = (Math.PI / spikes) * i;
-
-    const x = Math.cos(angle) * radius;
-    const y = Math.sin(angle) * radius;
-
-    if (i === 0) {
-      ctx.moveTo(x, y);
-    } else {
-      ctx.lineTo(x, y);
-    }
-  }
-
+  ctx.moveTo(this.x, this.y - this.size);
+  ctx.lineTo(this.x + this.size * 0.35, this.y - this.size * 0.35);
+  ctx.lineTo(this.x + this.size, this.y);
+  ctx.lineTo(this.x + this.size * 0.35, this.y + this.size * 0.35);
+  ctx.lineTo(this.x, this.y + this.size);
+  ctx.lineTo(this.x - this.size * 0.35, this.y + this.size * 0.35);
+  ctx.lineTo(this.x - this.size, this.y);
+  ctx.lineTo(this.x - this.size * 0.35, this.y - this.size * 0.35);
   ctx.closePath();
 
-  ctx.fillStyle = "rgba(120,190,255,0.75)";
-  ctx.shadowBlur = 12;
-  ctx.shadowColor = "rgba(120,190,255,0.8)";
-
   ctx.fill();
-
   ctx.restore();
 }
 
