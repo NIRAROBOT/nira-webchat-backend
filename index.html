@@ -539,15 +539,16 @@ sidePanel.classList.toggle("open");
 
 });
 
-const closePanelBtn = document.getElementById("closePanelBtn");
+document.addEventListener("click", (e) => {
 
-closePanelBtn.addEventListener("click", () => {
+  if (e.target.id === "closePanelBtn") {
 
-  sidePanel.classList.remove("open");
+    sidePanel.classList.remove("open");
+
+  }
 
 });
 
-});
 
 function autoResizeTextarea() {
   input.style.height = "48px";
