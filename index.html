@@ -497,6 +497,54 @@ button {
 .input-row #msg {
   flex: 1;
 }
+
+@media (max-width: 820px) {
+  #sidebar {
+    width: 230px;
+  }
+
+  #chat-container {
+    width: calc(100vw - 250px);
+  }
+}
+
+@media (max-width: 640px) {
+  #app-layout {
+    flex-direction: column;
+  }
+
+  #sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 210px;
+    border-right: none;
+    border-bottom: 1px solid rgba(0,150,255,0.12);
+  }
+
+  #main-chat {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+  }
+
+  #chat-container {
+    width: 94vw;
+    height: calc(100vh - 230px);
+    border-radius: 18px;
+  }
+
+  #chat-history {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .chat-item {
+    min-width: 160px;
+    white-space: nowrap;
+  }
+}
+ 
 @media (max-width: 640px) {
   #chat-container {
     width: 94vw;
