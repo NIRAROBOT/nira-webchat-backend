@@ -246,6 +246,47 @@ rgba(10,14,20,0.92) 100%
   overflow: hidden;
 }
 
+/* ===== MENU TOGGLE ===== */
+
+#menuToggle {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 12px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  background:
+    rgba(255,255,255,0.04);
+
+  color: white;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+
+  margin-right: 14px;
+
+  backdrop-filter: blur(12px);
+}
+
+#menuToggle:hover {
+  background:
+    rgba(0,150,255,0.12);
+
+  border-color:
+    rgba(0,150,255,0.22);
+
+  transform: scale(1.04);
+}
+ 
 /* ===== HEADER ===== */
 #header {
   display: flex;
@@ -269,6 +310,7 @@ rgba(10,14,20,0.92) 100%
   display: flex;
   align-items: center;
   gap: 14px;
+  flex: 1;
 }
 
 .avatar {
@@ -588,7 +630,8 @@ button {
 
   <!-- 🔥 HEADER ACTUALIZADO -->
   <div id="header">
-    <div class="header-left">
+  <button id="menuToggle">☰</button>
+  <div class="header-left">
       <img src="nira-avatar.png" class="avatar" />
       <div class="title">NIRA AI</div>
     </div>
