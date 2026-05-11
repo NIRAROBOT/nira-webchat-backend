@@ -600,12 +600,31 @@ button {
 }
  
 @media (max-width: 640px) {
-  #chat-container {
-    width: 94vw;
-    height: 80vh;
-    border-radius: 18px;
-  }
+#chat-container {
+  width: 94vw;
+  height: calc(100dvh - 24px);
+  max-height: calc(100dvh - 24px);
+  border-radius: 18px;
+}
 
+body {
+  align-items: stretch;
+  overflow: hidden;
+}
+
+#app-layout {
+  height: 100dvh;
+}
+
+#main-chat {
+  height: 100dvh;
+  align-items: center;
+}
+
+#messages {
+  min-height: 0;
+}
+ 
   #input-area {
     gap: 6px;
     padding: 12px;
