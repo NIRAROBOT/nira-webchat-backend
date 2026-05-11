@@ -738,6 +738,11 @@ const input = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
 const messages = document.getElementById("messages");
+const menuToggle = document.getElementById("menuToggle");
+menuToggle.addEventListener("click", () => {
+document.body.classList.toggle("sidebar-hidden");
+
+});
 function autoResizeTextarea() {
   input.style.height = "48px";
   input.style.height = input.scrollHeight + "px";
