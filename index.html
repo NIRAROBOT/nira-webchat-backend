@@ -55,7 +55,70 @@ body::before {
   z-index: 0;
   pointer-events: none;
 }
+/* ===== SIDE PANEL ===== */
 
+#sidePanel {
+  position: fixed;
+
+  top: 0;
+  left: -320px;
+
+  width: 300px;
+  height: 100vh;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8,12,20,0.98) 0%,
+      rgba(4,7,14,1) 100%
+    );
+
+  z-index: 999;
+
+  padding: 22px 18px;
+
+  transition: left 0.32s ease;
+
+  border-right:
+    1px solid rgba(0,150,255,0.10);
+
+  box-shadow:
+    0 0 40px rgba(0,0,0,0.45);
+}
+
+#sidePanel.open {
+  left: 0;
+}
+
+.panel-header {
+  margin-bottom: 24px;
+}
+
+.panel-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+}
+
+.panel-item {
+  padding: 14px;
+  border-radius: 14px;
+
+  background:
+    rgba(255,255,255,0.04);
+
+  color: rgba(255,255,255,0.82);
+
+  cursor: pointer;
+}
+
+.panel-item.active {
+  border:
+    1px solid rgba(0,150,255,0.22);
+
+  background:
+    rgba(0,150,255,0.10);
+}
 /* ===== CONTENEDOR ===== */
 #chat-container {
   width: min(94vw, 680px);
@@ -401,7 +464,17 @@ button {
 
 <body>
 <canvas id="particles"></canvas>
+<div id="sidePanel">
 
+  <div class="panel-header">
+    <div class="panel-title">NIRA Chats</div>
+  </div>
+
+  <div class="panel-item active">
+    Welcome Chat
+  </div>
+
+</div>
 <div id="chat-container">
 
   <!-- 🔥 HEADER ACTUALIZADO -->
@@ -443,6 +516,14 @@ const input = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
 const messages = document.getElementById("messages");
+const menuToggle = document.getElementById("menuToggle");
+const sidePanel = document.getElementById("sidePanel");
+
+menuToggle.addEventListener("click", () => {
+
+  sidePanel.classList.toggle("open");
+
+});
 function autoResizeTextarea() {
   input.style.height = "48px";
   input.style.height = input.scrollHeight + "px";
