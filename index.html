@@ -535,7 +535,17 @@ const sidePanel = document.getElementById("sidePanel");
 
 menuToggle.addEventListener("click", () => {
 
-  sidePanel.classList.toggle("open");
+sidePanel.classList.toggle("open");
+
+});
+
+const closePanelBtn = document.getElementById("closePanelBtn");
+
+closePanelBtn.addEventListener("click", () => {
+
+  sidePanel.classList.remove("open");
+
+});
 
 });
 
