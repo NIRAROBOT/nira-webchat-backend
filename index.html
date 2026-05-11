@@ -676,6 +676,25 @@ body {
     padding-bottom: 12px !important;
   }
 }
+
+#sidebarOverlay {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  #sidebarOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 9998;
+    opacity: 1;
+  }
+
+  .sidebar-hidden #sidebarOverlay {
+    display: none;
+  }
+}
  
 </style>
 </head>
@@ -683,7 +702,7 @@ body {
 <body class="sidebar-hidden">
 <canvas id="particles"></canvas>
 <div id="app-layout">
-
+<div id="sidebarOverlay"></div>
   <aside id="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-title">NIRA</div>
@@ -743,6 +762,23 @@ menuToggle.addEventListener("click", () => {
 document.body.classList.toggle("sidebar-hidden");
 
 });
+const menuToggle = document.getElementById("menuToggle");
+
+menuToggle.addEventListener("click", () => {
+
+  document.body.classList.toggle("sidebar-hidden");
+
+});
+
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+sidebarOverlay.addEventListener("click", () => {
+
+  document.body.classList.add("sidebar-hidden");
+
+});
+
+function autoResizeTextarea() {
 function autoResizeTextarea() {
   input.style.height = "48px";
   input.style.height = input.scrollHeight + "px";
