@@ -56,167 +56,6 @@ body::before {
   pointer-events: none;
 }
 
-/* ===== APP LAYOUT ===== */
-
-#app-layout {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  z-index: 1;
-}
-
-/* ===== SIDEBAR ===== */
-
-#sidebar {
-  width: 280px;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(8,12,20,0.96) 0%,
-      rgba(5,8,15,0.98) 100%
-    );
-
-  border-right: 1px solid rgba(0,150,255,0.10);
-
-  display: flex;
-  flex-direction: column;
-
-  padding: 18px 14px;
-
-  backdrop-filter: blur(18px);
-
-  box-shadow:
-    inset -1px 0 0 rgba(255,255,255,0.03),
-    0 0 40px rgba(0,0,0,0.35);
-
-  z-index: 2;
-}
-
-/* ===== SIDEBAR HEADER ===== */
-
-.sidebar-header {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-
-  margin-bottom: 22px;
-}
-
-.sidebar-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #f5f9ff;
-  letter-spacing: 0.4px;
-}
-
-/* ===== NEW CHAT BUTTON ===== */
-
-#newChatBtn {
-  width: 100%;
-
-  border-radius: 14px;
-
-  padding: 14px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #0d6efd,
-      #00c6ff
-    );
-
-  border: none;
-
-  color: white;
-
-  font-size: 15px;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition: all 0.25s ease;
-
-  box-shadow:
-    0 6px 20px rgba(0,150,255,0.28);
-}
-
-#newChatBtn:hover {
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 10px 28px rgba(0,150,255,0.35);
-}
-
-/* ===== CHAT HISTORY ===== */
-
-#chat-history {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  overflow-y: auto;
-
-  padding-right: 4px;
-}
-
-/* ===== CHAT ITEM ===== */
-
-.chat-item {
-  padding: 14px 14px;
-
-  border-radius: 14px;
-
-  background:
-    rgba(255,255,255,0.03);
-
-  color: rgba(255,255,255,0.82);
-
-  font-size: 14px;
-
-  cursor: pointer;
-
-  transition: all 0.22s ease;
-
-  border: 1px solid transparent;
-}
-
-.chat-item:hover {
-  background:
-    rgba(0,150,255,0.08);
-
-  border-color:
-    rgba(0,150,255,0.16);
-}
-
-.chat-item.active {
-  background:
-    linear-gradient(
-      135deg,
-      rgba(0,150,255,0.18),
-      rgba(0,90,255,0.10)
-    );
-
-  border:
-    1px solid rgba(0,150,255,0.22);
-
-  box-shadow:
-    0 0 18px rgba(0,150,255,0.12);
-}
-
-/* ===== MAIN CHAT ===== */
-
-#main-chat {
-  flex: 1;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  overflow: hidden;
-}
- 
 /* ===== CONTENEDOR ===== */
 #chat-container {
   width: min(94vw, 680px);
@@ -522,20 +361,7 @@ button {
 
 <body>
 <canvas id="particles"></canvas>
-<div id="app-layout">
 
-  <aside id="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-title">NIRA</div>
-      <button id="newChatBtn">+ New Chat</button>
-    </div>
-
-    <div id="chat-history">
-      <div class="chat-item active">Welcome Chat</div>
-    </div>
-  </aside>
-
-  <main id="main-chat">
 <div id="chat-container">
 
   <!-- 🔥 HEADER ACTUALIZADO -->
@@ -569,8 +395,7 @@ button {
    
   </div>
 
-  </main>
-</div>
+  </div>
 
 <script>
 const input = document.getElementById("msg");
