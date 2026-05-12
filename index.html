@@ -526,6 +526,13 @@ button {
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
+ const SUPABASE_URL = "sb_publishable_CcHCReVScSs_4XpL7i-Uxg_gaovuoCD";
+const SUPABASE_KEY = "sb_publishable_CcHCReVScSs_4XpL7i-Uxg_gaovuoCD";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 const input = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
